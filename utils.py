@@ -55,7 +55,7 @@ def setup_madgraph(home_dir,mg_tarball,mdl,process_card,scan_coeffs,cores,events
 
     with open('Cards/me5_configuration.txt','a') as f:
         f.write('\nnb_core = %d' % (cores))
-        f.write('\nrun_mode = 0')
+        f.write('\nrun_mode = 2')
         #f.write('\nlhapdf = /cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/lhapdf/6.1.6/share/LHAPDF/../../bin/lhapdf-config')
         f.write('\nlhapdf = /cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/lhapdf/6.1.6/share/LHAPDF/../../bin/lhapdf-config')
         f.write('\nautomatic_html_opening = False')
