@@ -21,20 +21,18 @@ TOP_MODEL = MadGraphModel(
 
 MG_TARBALL = "MG5_aMC_v2_6_1.tar.gz"
 SANDBOX    = 'test_1'
-PROC_CARD  = 'process_cards/ttZ.dat'
-#PROC_CARD  = 'process_cards/dim6_ttZ.dat'
 
-def main(model,limits):    
+def main(model,limits,proc_card):    
     home_dir = os.getcwd()
 
     events  = 5000
     cores   = 1
-    num_pts = 3
+    num_rwgt_pts = 3
 
     if not os.path.exists(SANDBOX):
         os.makedirs(SANDBOX)
         os.chdir(SANDBOX)
-        work_dir = setup_madgraph(home_dir,MG_TARBALL,model,PROC_CARD,limits.keys(),cores,events)
+        work_dir = setup_madgraph(home_dir,MG_TARBALL,model,proc_card,limits.keys(),cores,events)
     else:
         os.chdir(SANDBOX)
         work_dir = os.path.join(os.getcwd(),'work')
@@ -48,7 +46,7 @@ def main(model,limits):
             points.append([lha_code,limits[c][0],c])
     model.editParamCard(points,param_path)
     # Create the reweight card
-    rw_pts = create_reweight_points(limits,num_pts)
+    rw_pts = create_reweight_points(limits,num_rwgt_pts)
     print "rw pts:",rw_pts
     reweight_path = make_reweight_card(work_dir,model.np_block,rw_pts)
 
@@ -61,22 +59,24 @@ def main(model,limits):
 
 if __name__ == "__main__":
     model      = HEL_MODEL
+    proc_card  = 'process_cards/ttZ.dat'
     target     = 'cuW'
-    target_pts = [0.0]
+    starting_pts = [0.0]
     limits     = {
         'cuW': [0.0,-0.05,0.05],
         #'cuB': [0.0,-0.01,0.01],
     }
     
     #model      = TOP_MODEL
+    #proc_card  = 'process_cards/dim6_ttZ.dat'
     #target     = 'ctG'
-    ##target_pts = [-2.0,-1.0,0.0,1.0,2.0]
-    #target_pts = [0.0]
+    ##starting_pts = [-2.0,-1.0,0.0,1.0,2.0]
+    #starting_pts = [0.0]
     #limits     = {'ctG': [0.0,-2.0,2.0]}
 
     home_dir = os.getcwd()
-    for start_pt in target_pts:
+    for start_pt in starting_pts:
         print "Target: %.3f" % (start_pt)
         limits[target][0] = start_pt
-        main(model,limits)
+        main(model,limits,proc_card)
         os.chdir(home_dir)
