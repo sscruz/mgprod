@@ -20,9 +20,9 @@ TOP_MODEL = MadGraphModel(
 )
 
 MG_TARBALL = "MG5_aMC_v2_6_1.tar.gz"
-SANDBOX    = 'test_2'
-#PROC_CARD  = 'process_cards/ttZ.dat'
-PROC_CARD  = 'process_cards/dim6_ttZ.dat'
+SANDBOX    = 'test_1'
+PROC_CARD  = 'process_cards/ttZ.dat'
+#PROC_CARD  = 'process_cards/dim6_ttZ.dat'
 
 def main(model,limits):    
     home_dir = os.getcwd()
@@ -52,6 +52,7 @@ def main(model,limits):
     print "rw pts:",rw_pts
     reweight_path = make_reweight_card(work_dir,model.np_block,rw_pts)
 
+    # Generate events
     os.chdir(work_dir)
     print "Generating %d events..." % (events)
     runProcess(['./bin/generate_events','-f'])
@@ -59,19 +60,19 @@ def main(model,limits):
     #make_gridpack(os.path.join(home_dir,SANDBOX),work_dir)
 
 if __name__ == "__main__":
-    #model      = HEL_MODEL
-    #target     = 'cuW'
-    #target_pts = [0.0]
-    #limits     = {
-    #    'cuW': [0.0,-0.05,0.05],
-    #    #'cuB': [0.0,-0.01,0.01],
-    #}
-    
-    model      = TOP_MODEL
-    target     = 'ctG'
-    #target_pts = [-2.0,-1.0,0.0,1.0,2.0]
+    model      = HEL_MODEL
+    target     = 'cuW'
     target_pts = [0.0]
-    limits     = {'ctG': [0.0,-2.0,2.0]}
+    limits     = {
+        'cuW': [0.0,-0.05,0.05],
+        #'cuB': [0.0,-0.01,0.01],
+    }
+    
+    #model      = TOP_MODEL
+    #target     = 'ctG'
+    ##target_pts = [-2.0,-1.0,0.0,1.0,2.0]
+    #target_pts = [0.0]
+    #limits     = {'ctG': [0.0,-2.0,2.0]}
 
     home_dir = os.getcwd()
     for start_pt in target_pts:
