@@ -1,0 +1,5 @@
+set param_card MT 172.5 
+set param_card decay 6 auto 
+set param_card ctG 0.0 
+set param_card ctGI 0.0 
+
