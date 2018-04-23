@@ -1,0 +1,39 @@
+{
+    "events_per_gridpack": 50000,
+    "events_per_lumi": 500,
+    "lumis_per_task": 1,
+    "lhe": {
+        "cores":  1,
+        "memory": 1500,
+        "disk":   2000,
+        "event_size": 0.00063
+    },
+    "gs": {
+        "cores":  12,
+        "memory": 22000,
+        "disk":   22000,
+        "event_size": 1.000,
+        "units_per_task": 1
+    },
+    "digi": {
+        "cores":  12,
+        "memory": 22000,
+        "disk":   22000,
+        "event_size": 2.662,
+        "units_per_task": 1
+    },
+    "reco": {
+        "cores":  12,
+        "memory": 22000,
+        "disk":   22000,
+        "event_size": 0.450,
+        "units_per_task": 1
+    },
+    "maod": {
+        "cores": 12,
+        "memory": 22000,
+        "disk": 22000,
+        "event_size": 0.070,
+        "units_per_task": 5
+    }
+}
