@@ -9,8 +9,8 @@ fi
 cd CMSSW_9_3_1/src
 eval `scram runtime -sh`
 
-curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/HIG-RunIIFall17wmLHEGS-00040 --retry 2 --create-dirs -o Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-00040-fragment.py 
-[ -s Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-00040-fragment.py ] || exit $?;
+#curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/HIG-RunIIFall17wmLHEGS-00040 --retry 2 --create-dirs -o Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-00040-fragment.py 
+#[ -s Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-00040-fragment.py ] || exit $?;
 
 scram b
 cd ../../
