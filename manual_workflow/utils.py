@@ -28,6 +28,7 @@ def setup_madgraph(home_dir,mg_tarball,mdl,process_card,scan_coeffs,cores,events
     print 'Unpacking model tarball %s' % (os.path.join(mgbase_dir,mdl.tar_dir,mdl.tb))
     subprocess.call(['tar','xaf',os.path.join(home_dir,mdl.tar_dir,mdl.tb),'--directory=%s' % (os.path.join(mgbase_dir,'models'))])
 
+    # Modify the NP parameters to be non-zero, non-same values (so MadGraph doesn't get pissy about non-SM starting values)
     param_path = mdl.makeParamCard(mgbase_dir)
     np_params = mdl.getParameters(param_path)
     points = [[p[0],1.0*(idx+1),p[2]] if (p[2] in scan_coeffs) else [p[0],0.0,p[2]] for idx,p in enumerate(np_params)]
