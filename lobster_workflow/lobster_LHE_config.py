@@ -1,6 +1,6 @@
 import datetime
 import os
-import json
+#import json
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, MultiProductionDataset, StorageConfiguration, Workflow
@@ -47,8 +47,8 @@ coeff_whitelist = []
 # Only run over specific run numbers (i.e. MG starting points)
 runs_whitelist = []
 
-with open('config.json') as f:
-    data = json.load(f)
+#with open('config.json') as f:
+#    data = json.load(f)
 
 gridpacks = []
 for f in os.listdir(scans_path):
@@ -68,16 +68,13 @@ for f in os.listdir(scans_path):
 
 lhe_resources = Category(
     name='lhe',
-    cores=data['lhe']['cores'],
-    memory=data['lhe']['memory'],
-    disk=data['lhe']['disk']
+    cores=1,
+    memory=1500,
+    disk=2000
 )
-# Per Event Sizes
-lhe_fSz = data['lhe']['event_size']*data['events_per_lumi']*data['lumis_per_task']
 
-info = 'Estimated File Sizes:'
-info += '\n\tLHE: %.1f M' % (lhe_fSz)
-print info
+events_per_gridpack = 500e3
+events_per_lumi = 500
 
 wf = []
 
@@ -86,16 +83,9 @@ for idx,gridpack in enumerate(gridpacks):
     print "\t[%d/%d] Gridpack: %s" % (idx+1,len(gridpacks),gridpack)
     arr = gridpack.split('_')
     p,c,r = arr[0],arr[1],arr[2]
-    #if len(process_whitelist) > 0 and not p in process_whitelist:
-    #    continue
-    #elif len(coeff_whitelist) > 0 and not c in coeff_whitelist:
-    #    continue
-    #elif len(runs_whitelist) > 0 and not r in runs_whitelist:
-    #    continue
-
     lhe = Workflow(
         label='lhe_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun HIG-RunIIFall17wmLHE-00000_1_cfg.py',
+        command='cmsRun fragments/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge the output files, to keep individuals as small as possible
         cleanup_input=False,
@@ -103,9 +93,9 @@ for idx,gridpack in enumerate(gridpacks):
         outputs=['HIG-RunIIFall17wmLHE-00000ND.root'],
         dataset=MultiProductionDataset(
             gridpacks=gridpack,
-            events_per_gridpack=data['events_per_gridpack'],
-            events_per_lumi=data['events_per_lumi'],
-            lumis_per_task=data['lumis_per_task'],
+            events_per_gridpack=events_per_gridpack,
+            events_per_lumi=events_per_lumi,
+            lumis_per_task=1,
             randomize_seeds=True
         ),
         category=lhe_resources

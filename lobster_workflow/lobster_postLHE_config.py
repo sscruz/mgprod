@@ -1,6 +1,6 @@
 import datetime
 import os
-import json
+#import json
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
@@ -46,25 +46,6 @@ coeff_whitelist = []
 # Only run over specific run numbers (i.e. MG starting points)
 runs_whitelist = []
 
-# Input from the LHE step
-#input_dirs = [
-#    "lhe_step_run0",
-#    "lhe_step_run1",
-#    "lhe_step_run2",
-#    "lhe_step_run3",
-#    "lhe_step_run4",
-#    "lhe_step_run5",
-#    "lhe_step_run6",
-#    "lhe_step_run7",
-#    "lhe_step_run8",
-#    "lhe_step_run9",
-#    "lhe_step_run10",
-#    "lhe_step_run11",
-#    "lhe_step_run12",
-#    "lhe_step_run13",
-#    "lhe_step_run14"
-#]
-
 input_dirs = []
 for fd in os.listdir(input_path_full):
     if fd.find('lhe_step_') < 0:
@@ -79,58 +60,37 @@ for fd in os.listdir(input_path_full):
         continue
     input_dirs.append(fd)
 
-with open('config.json') as f:
-    data = json.load(f)
-
-events_per_unit = data['events_per_lumi']*data['lumis_per_task']
-
-# Events Per Task
-gs_evtTask   = data['gs']['units_per_task']*events_per_unit
-digi_evtTask = data['digi']['units_per_task']*events_per_unit
-reco_evtTask = data['reco']['units_per_task']*events_per_unit
-maod_evtTask = data['maod']['units_per_task']*events_per_unit
-
-# Per File Sizes
-gs_fSz   = gs_evtTask*data['gs']['event_size']
-digi_fSz = digi_evtTask*data['digi']['event_size']
-reco_fSz = reco_evtTask*data['reco']['event_size']
-maod_fSz = maod_evtTask*data['maod']['event_size']
-
-info = 'Estimated (un-merged) File Sizes:'
-info += '\n\tGEN-SIM: %.2f M' % (gs_fSz)
-info += '\n\tDIGI:    %.2f M' % (digi_fSz)
-info += '\n\tRECO:    %.2f M' % (reco_fSz)
-info += '\n\tmAOD:    %.2f M' % (maod_fSz)
-print info
+#with open('config.json') as f:
+#    data = json.load(f)
 
 gs_resources = Category(
     name='gs',
-    cores=data['gs']['cores'],
-    memory=data['gs']['memory'],
-    disk=data['gs']['disk'],
+    cores=12,
+    memory=22000,
+    disk=22000,
 )
 
 digi_resources = Category(
     name='digi',
-    cores=data['digi']['cores'],
-    memory=data['digi']['memory'],
-    disk=data['digi']['disk'],
+    cores=12,
+    memory=22000,
+    disk=22000,
     tasks_min=1
 )
 
 reco_resources = Category(
     name='reco',
-    cores=data['reco']['cores'],
-    memory=data['reco']['memory'],
-    disk=data['reco']['disk'],
+    cores=12,
+    memory=22000,
+    disk=22000,
     tasks_min=1
 )
 
 maod_resources = Category(
     name='maod',
-    cores=data['maod']['cores'],
-    memory=data['maod']['memory'],
-    disk=data['maod']['disk'],
+    cores=12,
+    memory=22000,
+    disk=22000,
     tasks_min=1
 )
 
@@ -148,7 +108,7 @@ for idx,lhe_dir in enumerate(input_dirs):
     p,c,r = arr[2],arr[3],arr[4]
     gs = Workflow(
         label='gs_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun HIG-RunIIFall17wmGS-00000_1_cfg.py',
+        command='cmsRun fragments/HIG-RunIIFall17wmGS-00000_1_cfg.py',
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,
@@ -156,7 +116,7 @@ for idx,lhe_dir in enumerate(input_dirs):
         outputs=['HIG-RunIIFall17wmLHEGS-00040ND.root'],
         dataset=Dataset(
             files=lhe_dir,
-            files_per_task=data['gs']['units_per_task'],
+            files_per_task=1,
             patterns=["*.root"]
         ),
         category=gs_resources
@@ -165,7 +125,7 @@ for idx,lhe_dir in enumerate(input_dirs):
     digi = Workflow(
         label='digi_step_%s_%s_%s' % (p,c,r),
         #command='cmsRun HIG-RunIIFall17DRPremix-00009_1_cfg.py',
-        command='cmsRun HIG-RunIIFall17DRPremix-00823_1_cfg.py',
+        command='cmsRun fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
@@ -173,7 +133,7 @@ for idx,lhe_dir in enumerate(input_dirs):
         outputs=['HIG-RunIIFall17DRPremix-00823ND_step1.root'],
         dataset=ParentDataset(
             parent=gs,
-            units_per_task=data['digi']['units_per_task']
+            units_per_task=1
         ),
         category=digi_resources
     )
@@ -181,7 +141,7 @@ for idx,lhe_dir in enumerate(input_dirs):
     reco = Workflow(
         label='reco_step_%s_%s_%s' % (p,c,r),
         #command='cmsRun HIG-RunIIFall17DRPremix-00009_2_cfg.py',
-        command='cmsRun HIG-RunIIFall17DRPremix-00823_2_cfg.py',
+        command='cmsRun fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
@@ -189,7 +149,7 @@ for idx,lhe_dir in enumerate(input_dirs):
         outputs=['HIG-RunIIFall17DRPremix-00823ND.root'],
         dataset=ParentDataset(
             parent=digi,
-            units_per_task=data['reco']['units_per_task']
+            units_per_task=1
         ),
         category=reco_resources
     )
@@ -197,7 +157,7 @@ for idx,lhe_dir in enumerate(input_dirs):
     maod = Workflow(
         label='mAOD_step_%s_%s_%s' % (p,c,r),
         #command='cmsRun HIG-RunIIFall17MiniAOD-00013_1_cfg.py',
-        command='cmsRun HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
+        command='cmsRun fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size='512M',
         cleanup_input=True,
@@ -205,7 +165,7 @@ for idx,lhe_dir in enumerate(input_dirs):
         outputs=['HIG-RunIIFall17MiniAOD-00821ND.root'],
         dataset=ParentDataset(
             parent=reco,
-            units_per_task=data['maod']['units_per_task']
+            units_per_task=5
         ),
         category=maod_resources
     )
