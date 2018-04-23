@@ -1,28 +1,26 @@
+#IMPORTANT: The workers that are submitted to this lobster master, MUST come from T3 resources
+
 import datetime
 import os
-#import json
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, MultiProductionDataset, StorageConfiguration, Workflow
 
-scans_path   = "/hadoop/store/user/awightma/gridpack_scans/2018_04_17/"
-input_path   = "/store/user/awightma/gridpack_scans/2018_04_17/"
+input_path_full = "/hadoop/store/user/awightma/gridpack_scans/2018_04_17/"
+input_path      = "/store/user/awightma/gridpack_scans/2018_04_17/"
 
-#version = "lobster_"+ datetime.datetime.now().strftime('%Y%m%d_%H%M')
-#output_path  = "/store/user/$USER/tests/" + version
-#workdir_path = "/tmpscratch/users/$USER/tests/" + version
-#plotdir_path = "~/www/lobster/tests/" + version
+version = "lobster_"+ datetime.datetime.now().strftime('%Y%m%d_%H%M')
+output_path  = "/store/user/$USER/tests/"       + version
+workdir_path = "/tmpscratch/users/$USER/tests/" + version
+plotdir_path = "~/www/lobster/tests/"           + version
 
-version = "v1"
-output_path  = "/store/user/$USER/LHE_step/2018_04_17/sans_ttW/"       + version
-workdir_path = "/tmpscratch/users/$USER/LHE_step/2018_04_17/sans_ttW/" + version
-plotdir_path = "~/www/lobster/LHE_step/2018_04_17/sans_ttW/"           + version
+#version = "v1"
+#output_path  = "/store/user/$USER/LHE_step/2018_04_17/sans_ttW/"       + version
+#workdir_path = "/tmpscratch/users/$USER/LHE_step/2018_04_17/sans_ttW/" + version
+#plotdir_path = "~/www/lobster/LHE_step/2018_04_17/sans_ttW/"           + version
 
 storage = StorageConfiguration(
     input=[
-        #"hdfs://eddie.crc.nd.edu:19000/store/user/gesmith/crab/EFT_test_6_12_17/",
-        #"root://deepthought.crc.nd.edu//store/user/gesmith/crab/EFT_test_6_12_17/"
-        #"file:///afs/crc.nd.edu/user/a/awightma/CMSSW_Releases/CMSSW_9_3_0/src/NPFitProduction/test"
         "hdfs://eddie.crc.nd.edu:19000"  + input_path,
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
         "gsiftp://T3_US_NotreDame"       + input_path,
@@ -33,26 +31,18 @@ storage = StorageConfiguration(
         "file:///hadoop"                 + output_path,
         # ND is not in the XrootD redirector, thus hardcode server.
         "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
-        #"chirp://eddie.crc.nd.edu:9094" + output_path,
         "gsiftp://T3_US_NotreDame"       + output_path,
         "srm://T3_US_NotreDame"          + output_path,
     ],
     disable_input_streaming=True,
 )
 
-# Only run over gridpacks from specific processes
+# Only run over gridpacks from specific processes/coeffs/runs (i.e. MG starting points)
 process_whitelist = ['ttH','ttZ','tZq']
-# Only run over gridpacks with specific coeffs
-coeff_whitelist = []
-# Only run over specific run numbers (i.e. MG starting points)
-runs_whitelist = []
-
-#with open('config.json') as f:
-#    data = json.load(f)
-
+coeff_whitelist   = []
+runs_whitelist    = []
 gridpacks = []
-for f in os.listdir(scans_path):
-    # Filter out unwanted gridpacks
+for f in os.listdir(input_path_full):
     arr = f.split('_')
     if len(arr) < 3:
         continue
@@ -65,7 +55,6 @@ for f in os.listdir(scans_path):
         continue
     gridpacks.append(f)
 
-
 lhe_resources = Category(
     name='lhe',
     cores=1,
@@ -73,7 +62,7 @@ lhe_resources = Category(
     disk=2000
 )
 
-events_per_gridpack = 500e3
+events_per_gridpack = 5000
 events_per_lumi = 500
 
 wf = []

@@ -1,6 +1,5 @@
 import datetime
 import os
-#import json
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
@@ -8,21 +7,18 @@ from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDatase
 input_path_full = "/hadoop/store/user/awightma/LHE_step/2018_04_17/500k_events/v2/"
 input_path      = "/store/user/awightma/LHE_step/2018_04_17/500k_events/v2/"
 
-#version = datetime.datetime.now().strftime('%Y%m%d_%H%M')
-#output_path  = "/store/user/$USER/tests/"       + version
-#workdir_path = "/tmpscratch/users/$USER/tests/" + version
-#plotdir_path = "~/www/lobster/tests/"           + version
+version = "lobster_"+ datetime.datetime.now().strftime('%Y%m%d_%H%M')
+output_path  = "/store/user/$USER/tests/"       + version
+workdir_path = "/tmpscratch/users/$USER/tests/" + version
+plotdir_path = "~/www/lobster/tests/"           + version
 
-version = "v2"
-output_path  = "/store/user/$USER/postLHE_step/2018_04_17/500k_events/"       + version
-workdir_path = "/tmpscratch/users/$USER/postLHE_step/2018_04_17/500k_events/" + version
-plotdir_path = "~/www/lobster/postLHE_step/2018_04_17/500k_events/"           + version
+#version = "v1"
+#output_path  = "/store/user/$USER/postLHE_step/2018_04_17/500k_events/"       + version
+#workdir_path = "/tmpscratch/users/$USER/postLHE_step/2018_04_17/500k_events/" + version
+#plotdir_path = "~/www/lobster/postLHE_step/2018_04_17/500k_events/"           + version
 
 storage = StorageConfiguration(
     input=[
-        #"hdfs://eddie.crc.nd.edu:19000/store/user/gesmith/crab/EFT_test_6_12_17/",
-        #"root://deepthought.crc.nd.edu//store/user/gesmith/crab/EFT_test_6_12_17/"
-        #"file:///afs/crc.nd.edu/user/a/awightma/CMSSW_Releases/CMSSW_9_3_0/src/NPFitProduction/test"
         "hdfs://eddie.crc.nd.edu:19000"  + input_path,
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
         "gsiftp://T3_US_NotreDame"       + input_path,
@@ -33,20 +29,17 @@ storage = StorageConfiguration(
         "file:///hadoop"                 + output_path,
         # ND is not in the XrootD redirector, thus hardcode server.
         "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
-        #"chirp://eddie.crc.nd.edu:9094" + output_path,
         "gsiftp://T3_US_NotreDame"       + output_path,
         "srm://T3_US_NotreDame"          + output_path,
     ],
+    disable_input_streaming=False,
 )
 
-# Only run over gridpacks from specific processes
+# Only run over lhe steps from specific processes/coeffs/runs (i.e. MG starting points)
 process_whitelist = []
-# Only run over gridpacks with specific coeffs
-coeff_whitelist = []
-# Only run over specific run numbers (i.e. MG starting points)
-runs_whitelist = []
-
-input_dirs = []
+coeff_whitelist   = []
+runs_whitelist    = []
+lhe_dirs = []
 for fd in os.listdir(input_path_full):
     if fd.find('lhe_step_') < 0:
         continue
@@ -58,10 +51,7 @@ for fd in os.listdir(input_path_full):
         continue
     elif len(runs_whitelist) > 0 and not r in runs_whitelist:
         continue
-    input_dirs.append(fd)
-
-#with open('config.json') as f:
-#    data = json.load(f)
+    lhe_dirs.append(fd)
 
 gs_resources = Category(
     name='gs',
@@ -94,16 +84,11 @@ maod_resources = Category(
     tasks_min=1
 )
 
-#info = 'Processing Data From:'
-#for d in input_dirs:
-#    info += "\n\t" + d
-#print info
-
 wf = []
 
 print "Generating workflows:"
-for idx,lhe_dir in enumerate(input_dirs):
-    print "\t[%d/%d] LHE Input: %s" % (idx+1,len(input_dirs),lhe_dir)
+for idx,lhe_dir in enumerate(lhe_dirs):
+    print "\t[%d/%d] LHE Input: %s" % (idx+1,len(lhe_dirs),lhe_dir)
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
     gs = Workflow(
