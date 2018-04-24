@@ -65,6 +65,12 @@ lhe_resources = Category(
 events_per_gridpack = 5000
 events_per_lumi = 500
 
+fragment_map = {
+    'default': {
+        'lhe': 'fragments/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
+    },
+}
+
 wf = []
 
 print "Generating workflows:"
@@ -72,9 +78,14 @@ for idx,gridpack in enumerate(gridpacks):
     print "\t[%d/%d] Gridpack: %s" % (idx+1,len(gridpacks),gridpack)
     arr = gridpack.split('_')
     p,c,r = arr[0],arr[1],arr[2]
+
+    lhe_fragment = fragment_map['default']['lhe']
+    if fragment_map.has_key(p):
+        lhe_fragment = fragment_map[p]['lhe']
+
     lhe = Workflow(
         label='lhe_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun fragments/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
+        command='cmsRun %s' % (lhe_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge the output files, to keep individuals as small as possible
         cleanup_input=False,

@@ -30,7 +30,7 @@ The second step runs on the output produced in the first step and uses [lobster_
 
     lobster process lobster_postLHE_config.py
 
-Then, on the condorfe submit nodes run:
+On the condorfe submit nodes run:
 
     nohup work_queue_factory -T condor -M "lobster_${USER}_EFT_postLHE" -d all -o /tmp/${USER}_lobster_factory.debug -C REPLACEME --runos=rhel6 >& /tmp/${USER}_lobster_factory.log &
 

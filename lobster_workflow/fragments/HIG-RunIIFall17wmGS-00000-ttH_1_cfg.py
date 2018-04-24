@@ -94,8 +94,16 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'JetMatching:qCut = 60.', 
             'JetMatching:nQmatch = 5', 
             #'JetMatching:nJetMax = 5', 
-            'JetMatching:nJetMax = 0',
+            #'JetMatching:nJetMax = 0',
             'JetMatching:doShowerKt = off',
+            # ttH specific settings, should disable for non-ttH process
+            'JetMatching:nJetMax = 1',  # For ttHJet process
+            'SLHA:useDecayTable = off',  # Use pythia8s own decay mode instead of decays defined in LH accord
+            '25:m0 = 125.0',
+            '23:mMin = 0.05',       # Solve problem with mZ cut
+            '24:mMin = 0.05',       # Solve problem with mW cut
+            '25:onMode = on',       # Allow all higgs decays 
+            '25:offIfAny = 5 5',    # Switch decays of b quarks off
             ),
         pythia8CP5Settings = cms.vstring(
             'Tune:pp 14', 
@@ -152,7 +160,7 @@ process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 # filter all path with the production filter sequence
 for path in process.paths:
-	getattr(process,path)._seq = process.generator * getattr(process,path)._seq 
+    getattr(process,path)._seq = process.generator * getattr(process,path)._seq 
 
 # customisation of the process.
 

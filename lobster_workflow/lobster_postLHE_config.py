@@ -84,6 +84,21 @@ maod_resources = Category(
     tasks_min=1
 )
 
+fragment_map = {
+    'default': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000_1_cfg.py',
+        'digi': 'fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
+        'reco': 'fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
+        'maod': 'fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
+    },
+    'ttH': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
+        'digi': 'fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
+        'reco': 'fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
+        'maod': 'fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
+    }
+}
+
 wf = []
 
 print "Generating workflows:"
@@ -91,9 +106,20 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     print "\t[%d/%d] LHE Input: %s" % (idx+1,len(lhe_dirs),lhe_dir)
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
+
+    gs_fragment   = fragment_map['default']['gs']
+    digi_fragment = fragment_map['default']['digi']
+    reco_fragment = fragment_map['default']['reco']
+    maod_fragment = fragment_map['default']['maod']
+    if fragment_map.has_key(p):
+        gs_fragment   = fragment_map[p]['gs']
+        digi_fragment = fragment_map[p]['digi']
+        reco_fragment = fragment_map[p]['reco']
+        maod_fragment = fragment_map[p]['maod']
+
     gs = Workflow(
         label='gs_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun fragments/HIG-RunIIFall17wmGS-00000_1_cfg.py',
+        command='cmsRun %s' % (gs_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,
@@ -109,12 +135,10 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     digi = Workflow(
         label='digi_step_%s_%s_%s' % (p,c,r),
-        #command='cmsRun HIG-RunIIFall17DRPremix-00009_1_cfg.py',
-        command='cmsRun fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
+        command='cmsRun %s' (digi_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
-        #outputs=['HIG-RunIIFall17DRPremix-00009ND_step1.root'],
         outputs=['HIG-RunIIFall17DRPremix-00823ND_step1.root'],
         dataset=ParentDataset(
             parent=gs,
@@ -125,12 +149,10 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     reco = Workflow(
         label='reco_step_%s_%s_%s' % (p,c,r),
-        #command='cmsRun HIG-RunIIFall17DRPremix-00009_2_cfg.py',
-        command='cmsRun fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
+        command='cmsRun %s' % (reco_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
-        #outputs=['HIG-RunIIFall17DRPremix-00009ND.root'],
         outputs=['HIG-RunIIFall17DRPremix-00823ND.root'],
         dataset=ParentDataset(
             parent=digi,
@@ -141,12 +163,10 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     maod = Workflow(
         label='mAOD_step_%s_%s_%s' % (p,c,r),
-        #command='cmsRun HIG-RunIIFall17MiniAOD-00013_1_cfg.py',
-        command='cmsRun fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
+        command='cmsRun %s' % (maod_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size='512M',
         cleanup_input=True,
-        #outputs=['HIG-RunIIFall17MiniAOD-00013ND.root'],
         outputs=['HIG-RunIIFall17MiniAOD-00821ND.root'],
         dataset=ParentDataset(
             parent=reco,
