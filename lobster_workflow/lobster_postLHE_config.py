@@ -138,7 +138,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         command='cmsRun %s' (digi_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
-        cleanup_input=True,
+        cleanup_input=False,    # Save the GEN-SIM step
         outputs=['HIG-RunIIFall17DRPremix-00823ND_step1.root'],
         dataset=ParentDataset(
             parent=gs,

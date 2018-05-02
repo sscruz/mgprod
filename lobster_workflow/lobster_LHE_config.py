@@ -6,8 +6,12 @@ import os
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, MultiProductionDataset, StorageConfiguration, Workflow
 
-input_path_full = "/hadoop/store/user/awightma/gridpack_scans/2018_04_17/"
 input_path      = "/store/user/awightma/gridpack_scans/2018_04_17/"
+input_path_full = "/hadoop" + input_path
+
+# For running on gridpacks in a local directory
+#input_path_full = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
+#input_path      = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
 
 version = "lobster_"+ datetime.datetime.now().strftime('%Y%m%d_%H%M')
 output_path  = "/store/user/$USER/tests/"       + version
@@ -15,9 +19,10 @@ workdir_path = "/tmpscratch/users/$USER/tests/" + version
 plotdir_path = "~/www/lobster/tests/"           + version
 
 #version = "v1"
-#output_path  = "/store/user/$USER/LHE_step/2018_04_17/sans_ttW/"       + version
-#workdir_path = "/tmpscratch/users/$USER/LHE_step/2018_04_17/sans_ttW/" + version
-#plotdir_path = "~/www/lobster/LHE_step/2018_04_17/sans_ttW/"           + version
+#grp_tag = "2018_04_17/sans_ttW"
+#output_path  = "/store/user/$USER/LHE_step/%s/" % (grp_tag)       + version
+#workdir_path = "/tmpscratch/users/$USER/LHE_step/%s/" % (grp_tag) + version
+#plotdir_path = "~/www/lobster/LHE_step/%s/" % (grp_tag)           + version
 
 storage = StorageConfiguration(
     input=[
@@ -25,6 +30,7 @@ storage = StorageConfiguration(
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
         "gsiftp://T3_US_NotreDame"       + input_path,
         "srm://T3_US_NotreDame"          + input_path,
+        #"file://" + input_path,    # For running on gridpacks in a local directory
     ],
     output=[
         "hdfs://eddie.crc.nd.edu:19000"  + output_path,
