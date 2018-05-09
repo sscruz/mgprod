@@ -4,18 +4,47 @@ import os
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
 
-input_path_full = "/hadoop/store/user/awightma/LHE_step/2018_04_17/500k_events/v2/"
-input_path      = "/store/user/awightma/LHE_step/2018_04_17/500k_events/v2/"
+timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
-version = "lobster_"+ datetime.datetime.now().strftime('%Y%m%d_%H%M')
-output_path  = "/store/user/$USER/tests/"       + version
-workdir_path = "/tmpscratch/users/$USER/tests/" + version
-plotdir_path = "~/www/lobster/tests/"           + version
+#RUN_SETUP = 'local'
+#RUN_SETUP = 'full_production'
+RUN_SETUP = 'mg_studies'
 
-#version = "v1"
-#output_path  = "/store/user/$USER/postLHE_step/2018_04_17/500k_events/"       + version
-#workdir_path = "/tmpscratch/users/$USER/postLHE_step/2018_04_17/500k_events/" + version
-#plotdir_path = "~/www/lobster/postLHE_step/2018_04_17/500k_events/"           + version
+input_version  = "v1"   # The version index for the input directory
+output_version = "v1"   # The version index for the output directory
+
+grp_tag        = "2018_04_17/500k_events"
+production_tag = "Round1/Batch1"
+
+# Only run over lhe steps from specific processes/coeffs/runs
+process_whitelist = []
+coeff_whitelist   = []
+runs_whitelist    = []  # (i.e. MG starting points)
+
+if RUN_SETUP == 'local':
+    # For quick generic lobster workflow testing
+    input_path     = "/store/user/awightma/LHE_step/%s/%s/" % (grp_tag,input_version)
+    output_version = "lobster_"+ timestamp_tag
+    output_path  = "/store/user/$USER/tests/"       + output_version
+    workdir_path = "/tmpscratch/users/$USER/tests/" + output_version
+    plotdir_path = "~/www/lobster/tests/"           + output_version
+elif RUN_SETUP == 'mg_studies':
+    # For MadGraph test studies
+    input_path   = "/store/user/awightma/LHE_step/%s/%s/" % (grp_tag,input_version)
+    output_path  = "/store/user/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
+    workdir_path = "/tmpscratch/users/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
+    plotdir_path = "~/www/lobster/postLHE_step/%s/%s" % (grp_tag,output_version)
+elif RUN_SETUP == 'full_production':
+    # For Large MC production
+    input_path   = "/store/user/awightma/FullProduction/%s/LHE_step/%s/" % (production_tag,input_version)
+    output_path  = "/store/user/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
+    workdir_path = "/tmpscratch/users/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
+    plotdir_path = "~/www/lobster/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
+else:
+    print "Unknown run setup, %s" % (RUN_SETUP)
+    raise ValueError
+
+input_path_full = "/hadoop" + input_path
 
 storage = StorageConfiguration(
     input=[
@@ -26,19 +55,15 @@ storage = StorageConfiguration(
     ],
     output=[
         "hdfs://eddie.crc.nd.edu:19000"  + output_path,
-        "file:///hadoop"                 + output_path,
         # ND is not in the XrootD redirector, thus hardcode server.
         "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
         "gsiftp://T3_US_NotreDame"       + output_path,
         "srm://T3_US_NotreDame"          + output_path,
+        "file:///hadoop"                 + output_path,
     ],
     disable_input_streaming=False,
 )
 
-# Only run over lhe steps from specific processes/coeffs/runs (i.e. MG starting points)
-process_whitelist = []
-coeff_whitelist   = []
-runs_whitelist    = []
 lhe_dirs = []
 for fd in os.listdir(input_path_full):
     if fd.find('lhe_step_') < 0:
@@ -57,7 +82,7 @@ gs_resources = Category(
     name='gs',
     cores=12,
     memory=22000,
-    disk=22000,
+    disk=22000
 )
 
 digi_resources = Category(
@@ -135,7 +160,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     digi = Workflow(
         label='digi_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' (digi_fragment),
+        command='cmsRun %s' % (digi_fragment),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,    # Save the GEN-SIM step
@@ -178,7 +203,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     wf.extend([gs,digi,reco,maod])
 
 config = Config(
-    label='EFT_postLHE',
+    label='EFT_postLHE_%s' % (timestamp_tag),
     workdir=workdir_path,
     plotdir=plotdir_path,
     storage=storage,
