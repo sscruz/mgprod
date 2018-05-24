@@ -26,7 +26,7 @@ Make sure to have a `work_queue_factory` running, otherwise lobster won't have a
 
     nohup work_queue_factory -T condor -M "lobster_${USER}_EFT_LHE.*" -d all -o /tmp/${USER}_lobster_factory.debug -C REPLACEME >& /tmp/${USER}_lobster_factory.log &
 
-Make sure to replace the `REPLACEME` with a path to your own `work_queue_factory` config file (e.g. `/afs/crc.nd.edu/user/a/awightma/Public/worker_factories/factory_T3_12c.json`). *Note:* It is _very_ important for this step that all the workers which are used by the lobster master come from the T3 resources, otherwise the tasks will take significantly longer to finish.
+Make sure to replace the `REPLACEME` with a path to your own `work_queue_factory` config file (e.g. `/afs/crc.nd.edu/user/a/awightma/Public/worker_factories/factory_T3_12c.json`). **Note:** It is _very_ important for this step that all the workers which are used by the lobster master come from the T3 resources, otherwise the tasks will take significantly longer to finish.
 
 The second step runs on the output produced in the first step and uses [lobster_postLHE_config.py](lobster_workflow/lobster_postLHE_config.py). You will need to change the `input_path` and (possibly) `input_path_full` variables to point to the output directory where you placed the LHE step root files. Similar to before, run the following:
 
