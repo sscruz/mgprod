@@ -15,12 +15,11 @@ events_per_gridpack = 50000
 RUN_SETUP = 'mg_studies'
 
 # Where the gridpacks are located
-#input_path      = "/store/user/awightma/gridpack_scans/2018_04_17/"
-input_path      = "/store/user/awightma/gridpack_scans/2018_05_03/"
+input_path      = "/store/user/awightma/gridpack_scans/2018_05_06/"
 input_path_full = "/hadoop" + input_path
 
 version = "v1"
-grp_tag = "2018_05_03/2HeavyScan1dim"
+grp_tag = "2018_05_06/2HeavyScan1dim"
 production_tag = "Round1/Batch1"
 
 # Only run over gridpacks from specific processes/coeffs/runs
@@ -31,9 +30,9 @@ runs_whitelist    = []    # (i.e. MG starting points)
 if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
     input_path      = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
-    input_path_full = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
+    input_path_full = input_path
 
-    version = "lobster_"+ timestamp_tag
+    version = "lobster_" + timestamp_tag
     output_path  = "/store/user/$USER/tests/"       + version
     workdir_path = "/tmpscratch/users/$USER/tests/" + version
     plotdir_path = "~/www/lobster/tests/"           + version

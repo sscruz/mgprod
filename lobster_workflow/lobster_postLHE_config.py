@@ -6,15 +6,17 @@ from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDatase
 
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
+username = "awightma"
+
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
 RUN_SETUP = 'mg_studies'
 
-input_version  = "v1"   # The version index for the input directory
-output_version = "v1"   # The version index for the output directory
+input_version  = "v1"   # The version index for the INPUT directory
+output_version = "v1"   # The version index for the OUTPUT directory
 
-grp_tag        = "2018_04_17/500k_events"
-production_tag = "Round1/Batch1"
+grp_tag        = "2018_04_17/500k_events"   # For 'local' and 'mg_studies' setups
+production_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
 process_whitelist = []
@@ -23,20 +25,20 @@ runs_whitelist    = []  # (i.e. MG starting points)
 
 if RUN_SETUP == 'local':
     # For quick generic lobster workflow testing
-    input_path     = "/store/user/awightma/LHE_step/%s/%s/" % (grp_tag,input_version)
+    input_path     = "/store/user/%s/LHE_step/%s/%s/" % (username,grp_tag,input_version)
     output_version = "lobster_"+ timestamp_tag
     output_path  = "/store/user/$USER/tests/"       + output_version
     workdir_path = "/tmpscratch/users/$USER/tests/" + output_version
     plotdir_path = "~/www/lobster/tests/"           + output_version
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
-    input_path   = "/store/user/awightma/LHE_step/%s/%s/" % (grp_tag,input_version)
+    input_path   = "/store/user/%s/LHE_step/%s/%s/" % (username,grp_tag,input_version)
     output_path  = "/store/user/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
     workdir_path = "/tmpscratch/users/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
     plotdir_path = "~/www/lobster/postLHE_step/%s/%s" % (grp_tag,output_version)
 elif RUN_SETUP == 'full_production':
     # For Large MC production
-    input_path   = "/store/user/awightma/FullProduction/%s/LHE_step/%s/" % (production_tag,input_version)
+    input_path   = "/store/user/%s/FullProduction/%s/LHE_step/%s/" % (username,production_tag,input_version)
     output_path  = "/store/user/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
     workdir_path = "/tmpscratch/users/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
     plotdir_path = "~/www/lobster/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
