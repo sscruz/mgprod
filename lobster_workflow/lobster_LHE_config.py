@@ -9,6 +9,7 @@ from lobster.core import AdvancedOptions, Category, Config, MultiProductionDatas
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
 events_per_gridpack = 50000
+events_per_lumi = 500
 
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
@@ -26,6 +27,9 @@ production_tag = "Round1/Batch1"
 process_whitelist = []
 coeff_whitelist   = []
 runs_whitelist    = []    # (i.e. MG starting points)
+
+#master_label = 'EFT_LHE_%s' % (timestamp_tag)
+master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
 
 if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
@@ -119,12 +123,11 @@ for f in os.listdir(input_path_full):
 lhe_resources = Category(
     name='lhe',
     cores=1,
-    memory=1500,
-    disk=2000
+    memory=1200,
+    disk=1000
 )
 
-events_per_lumi = 500
-
+wf_steps = ['lhe']
 fragment_map = {
     'default': {
         'lhe': 'fragments/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
@@ -139,13 +142,17 @@ for idx,gridpack in enumerate(gridpacks):
     arr = gridpack.split('_')
     p,c,r = arr[0],arr[1],arr[2]
 
-    lhe_fragment = fragment_map['default']['lhe']
-    if fragment_map.has_key(p):
-        lhe_fragment = fragment_map[p]['lhe']
+    wf_fragments = {}
+    for step in wf_steps:
+        if fragment_map.has_key(p) and fragment_map[p].has_key(step):
+            wf_fragments[step] = fragment_map[p][step]
+        else:
+            wf_fragments[step] = fragment_map['default'][step]
 
     lhe = Workflow(
         label='lhe_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (lhe_fragment),
+        #command='cmsRun %s' % (lhe_fragment),
+        command='cmsRun %s' % (wf_fragments['lhe']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge the output files, to keep individuals as small as possible
         cleanup_input=False,
@@ -163,7 +170,7 @@ for idx,gridpack in enumerate(gridpacks):
     wf.extend([lhe])
 
 config = Config(
-    label='EFT_LHE_%s' % (timestamp_tag),
+    label=master_label,
     workdir=workdir_path,
     plotdir=plotdir_path,
     storage=storage,

@@ -23,6 +23,8 @@ process_whitelist = []
 coeff_whitelist   = []
 runs_whitelist    = []  # (i.e. MG starting points)
 
+master_label = 'EFT_ALL_postLHE_%s' % (timestamp_tag)
+
 if RUN_SETUP == 'local':
     # For quick generic lobster workflow testing
     input_path     = "/store/user/%s/LHE_step/%s/%s/" % (username,grp_tag,input_version)
@@ -80,37 +82,42 @@ for fd in os.listdir(input_path_full):
         continue
     lhe_dirs.append(fd)
 
+#################################################################
+# Worker Res.:
+#   Cores:  12    | 4
+#   Memory: 16000 | 8000
+#   Disk:   13000 | 6500
+#################################################################
 gs_resources = Category(
     name='gs',
-    cores=12,
-    memory=22000,
-    disk=22000
+    cores=6,
+    memory=3000,
+    disk=3000
 )
 
 digi_resources = Category(
     name='digi',
-    cores=12,
-    memory=22000,
-    disk=22000,
-    tasks_min=1
+    cores=6,
+    memory=8500,
+    disk=3000,
 )
 
 reco_resources = Category(
     name='reco',
-    cores=12,
-    memory=22000,
-    disk=22000,
-    tasks_min=1
+    cores=3,
+    memory=3500,
+    disk=3000,
 )
 
 maod_resources = Category(
     name='maod',
-    cores=12,
-    memory=22000,
-    disk=22000,
-    tasks_min=1
+    cores=1,
+    memory=2500,
+    disk=2000,
 )
+#################################################################
 
+wf_steps = ['gs','digi','reco','maod']
 fragment_map = {
     'default': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000_1_cfg.py',
@@ -120,9 +127,6 @@ fragment_map = {
     },
     'ttH': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
-        'digi': 'fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
-        'reco': 'fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
-        'maod': 'fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
     }
 }
 
@@ -134,19 +138,16 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
 
-    gs_fragment   = fragment_map['default']['gs']
-    digi_fragment = fragment_map['default']['digi']
-    reco_fragment = fragment_map['default']['reco']
-    maod_fragment = fragment_map['default']['maod']
-    if fragment_map.has_key(p):
-        gs_fragment   = fragment_map[p]['gs']
-        digi_fragment = fragment_map[p]['digi']
-        reco_fragment = fragment_map[p]['reco']
-        maod_fragment = fragment_map[p]['maod']
+    wf_fragments = {}
+    for step in wf_steps:
+        if fragment_map.has_key(p) and fragment_map[p].has_key(step):
+            wf_fragments[step] = fragment_map[p][step]
+        else:
+            wf_fragments[step] = fragment_map['default'][step]
 
     gs = Workflow(
         label='gs_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (gs_fragment),
+        command='cmsRun %s' % (wf_fragments['gs']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,
@@ -162,7 +163,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     digi = Workflow(
         label='digi_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (digi_fragment),
+        command='cmsRun %s' % (wf_fragments['digi']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,    # Save the GEN-SIM step
@@ -176,7 +177,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     reco = Workflow(
         label='reco_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (reco_fragment),
+        command='cmsRun %s' % (wf_fragments['reco']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
@@ -190,14 +191,14 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     maod = Workflow(
         label='mAOD_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (maod_fragment),
+        command='cmsRun %s' % (wf_fragments['maod']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size='512M',
         cleanup_input=True,
         outputs=['HIG-RunIIFall17MiniAOD-00821ND.root'],
         dataset=ParentDataset(
             parent=reco,
-            units_per_task=5
+            units_per_task=1
         ),
         category=maod_resources
     )
@@ -205,7 +206,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     wf.extend([gs,digi,reco,maod])
 
 config = Config(
-    label='EFT_postLHE_%s' % (timestamp_tag),
+    label=master_label,
     workdir=workdir_path,
     plotdir=plotdir_path,
     storage=storage,
