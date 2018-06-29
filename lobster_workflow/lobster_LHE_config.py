@@ -35,76 +35,52 @@ if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
     input_path      = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
     input_path_full = input_path
-
     version = "lobster_" + timestamp_tag
     output_path  = "/store/user/$USER/tests/"       + version
     workdir_path = "/tmpscratch/users/$USER/tests/" + version
     plotdir_path = "~/www/lobster/tests/"           + version
-
-    storage = StorageConfiguration(
-        input=[
-            "file://" + input_path,    # For running on gridpacks in a local directory
-        ],
-        output=[
-            "hdfs://eddie.crc.nd.edu:19000"  + output_path,
-            # ND is not in the XrootD redirector, thus hardcode server.
-            "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
-            "gsiftp://T3_US_NotreDame"       + output_path,
-            "srm://T3_US_NotreDame"          + output_path,
-            "file:///hadoop"                 + output_path,
-        ],
-        disable_input_streaming=True,
-    )
+    inputs = [
+        "file://" + input_path,    # For running on gridpacks in a local directory
+    ]
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
     output_path  = "/store/user/$USER/LHE_step/%s/" % (grp_tag)       + version
     workdir_path = "/tmpscratch/users/$USER/LHE_step/%s/" % (grp_tag) + version
     plotdir_path = "~/www/lobster/LHE_step/%s/" % (grp_tag)           + version
-
-    storage = StorageConfiguration(
-        input=[
-            "hdfs://eddie.crc.nd.edu:19000"  + input_path,
-            "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
-            "gsiftp://T3_US_NotreDame"       + input_path,
-            "srm://T3_US_NotreDame"          + input_path,
-        ],
-        output=[
-            "hdfs://eddie.crc.nd.edu:19000"  + output_path,
-            # ND is not in the XrootD redirector, thus hardcode server.
-            "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
-            "gsiftp://T3_US_NotreDame"       + output_path,
-            "srm://T3_US_NotreDame"          + output_path,
-            "file:///hadoop"                 + output_path,
-        ],
-        disable_input_streaming=True,
-    )
+    inputs = [
+        "hdfs://eddie.crc.nd.edu:19000"  + input_path,
+        "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
+        "gsiftp://T3_US_NotreDame"       + input_path,
+        "srm://T3_US_NotreDame"          + input_path,
+    ]
 elif RUN_SETUP == 'full_production':
     # For Large MC production
     output_path  = "/store/user/$USER/FullProduction/%s/LHE_step/%s" % (production_tag,version)
     workdir_path = "/tmpscratch/users/$USER/FullProduction/%s/LHE_step/%s" % (production_tag,version)
     plotdir_path = "~/www/lobster/FullProduction/%s/LHE_step/%s" % (production_tag,version)
-
-    storage = StorageConfiguration(
-        input=[
-            "hdfs://eddie.crc.nd.edu:19000"  + input_path,
-            "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
-            "gsiftp://T3_US_NotreDame"       + input_path,
-            "srm://T3_US_NotreDame"          + input_path,
-            #"file://" + input_path,    # For running on gridpacks in a local directory
-        ],
-        output=[
-            "hdfs://eddie.crc.nd.edu:19000"  + output_path,
-            # ND is not in the XrootD redirector, thus hardcode server.
-            "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
-            "gsiftp://T3_US_NotreDame"       + output_path,
-            "srm://T3_US_NotreDame"          + output_path,
-            "file:///hadoop"                 + output_path,
-        ],
-        disable_input_streaming=True,
-    )
+    inputs = [
+        "hdfs://eddie.crc.nd.edu:19000"  + input_path,
+        "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
+        "gsiftp://T3_US_NotreDame"       + input_path,
+        "srm://T3_US_NotreDame"          + input_path,
+        #"file://" + input_path,    # For running on gridpacks in a local directory
+    ]
 else:
     print "Unknown run setup, %s" % (RUN_SETUP)
     raise ValueError
+
+storage = StorageConfiguration(
+    input=inputs,
+    output=[
+        "hdfs://eddie.crc.nd.edu:19000"  + output_path,
+        # ND is not in the XrootD redirector, thus hardcode server.
+        "root://deepthought.crc.nd.edu/" + output_path, # Note the extra slash after the hostname!
+        "gsiftp://T3_US_NotreDame"       + output_path,
+        "srm://T3_US_NotreDame"          + output_path,
+        "file:///hadoop"                 + output_path,
+    ],
+    disable_input_streaming=True,
+)
 
 gridpacks = []
 for f in os.listdir(input_path_full):
