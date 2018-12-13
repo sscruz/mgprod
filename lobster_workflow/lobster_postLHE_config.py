@@ -145,8 +145,8 @@ reco_resources = Category(
 
 maod_resources = Category(
     name='maod',
-    cores=1,
-    memory=2000,
+    cores=2,
+    memory=2500,
     disk=1000,
 )
 #################################################################

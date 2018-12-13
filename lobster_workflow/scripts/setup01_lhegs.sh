@@ -1,4 +1,5 @@
 #!/bin/bash
+# See: https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_setup/HIG-RunIIFall17wmLHEGS-00040
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc6_amd64_gcc630
 if [ -r CMSSW_9_3_1/src ] ; then 

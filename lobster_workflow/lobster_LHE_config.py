@@ -20,7 +20,7 @@ input_path      = "/store/user/awightma/gridpack_scans/2018_05_06/"
 input_path_full = "/hadoop" + input_path
 
 version = "v1"
-grp_tag = "2018_05_06/2HeavyScan1dim"
+grp_tag = "2018_08_24/ttZRunCard"
 production_tag = "Round1/Batch1"
 
 # Only run over gridpacks from specific processes/coeffs/runs
@@ -28,8 +28,8 @@ process_whitelist = []
 coeff_whitelist   = []
 runs_whitelist    = []    # (i.e. MG starting points)
 
-#master_label = 'EFT_LHE_%s' % (timestamp_tag)
-master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
+master_label = 'EFT_LHE_%s' % (timestamp_tag)
+#master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
 
 if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
