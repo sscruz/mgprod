@@ -2,31 +2,36 @@
 
 import datetime
 import os
+import sys
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, MultiProductionDataset, StorageConfiguration, Workflow
 
+sys.path.append(os.getcwd())
+from helpers.utils import regex_match
+
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
-events_per_gridpack = 50000
+events_per_gridpack = 50e3
 events_per_lumi = 500
 
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
 RUN_SETUP = 'mg_studies'
+#RUN_SETUP = 'lobster_test'
 
 # Where the gridpacks are located
-input_path      = "/store/user/awightma/gridpack_scans/2018_05_06/"
+input_path      = "/store/user/awightma/gridpack_scans/2018_08_24/"
 input_path_full = "/hadoop" + input_path
 
 version = "v1"
-grp_tag = "2018_08_24/ttZRunCard"
-production_tag = "Round1/Batch1"
+grp_tag = "2019_04_19/ttZRunCard"
+production_tag = "Round4/Batch5"
 
 # Only run over gridpacks from specific processes/coeffs/runs
-process_whitelist = []
-coeff_whitelist   = []
-runs_whitelist    = []    # (i.e. MG starting points)
+process_whitelist = ["ttH","ttlnu"]
+coeff_whitelist   = ["16DOldLimitsAxisScan"]
+runs_whitelist    = ["run1"]    # (i.e. MG starting points)
 
 master_label = 'EFT_LHE_%s' % (timestamp_tag)
 #master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
@@ -65,6 +70,18 @@ elif RUN_SETUP == 'full_production':
         "srm://T3_US_NotreDame"          + input_path,
         #"file://" + input_path,    # For running on gridpacks in a local directory
     ]
+elif RUN_SETUP == 'lobster_test':
+    # For lobster workflow tests
+    grp_tag = "tests/lobster_%s" % (timestamp_tag)
+    output_path  = "/store/user/$USER/LHE_step/%s/" % (grp_tag)       + version
+    workdir_path = "/tmpscratch/users/$USER/LHE_step/%s/" % (grp_tag) + version
+    plotdir_path = "~/www/lobster/LHE_step/%s/" % (grp_tag)           + version
+    inputs = [
+        "hdfs://eddie.crc.nd.edu:19000"  + input_path,
+        "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
+        "gsiftp://T3_US_NotreDame"       + input_path,
+        "srm://T3_US_NotreDame"          + input_path,
+    ]
 else:
     print "Unknown run setup, %s" % (RUN_SETUP)
     raise ValueError
@@ -88,11 +105,11 @@ for f in os.listdir(input_path_full):
     if len(arr) < 3:
         continue
     p,c,r = arr[0],arr[1],arr[2]
-    if len(process_whitelist) > 0 and not p in process_whitelist:
+    if len(regex_match([p],process_whitelist)) == 0:
         continue
-    elif len(coeff_whitelist) > 0 and not c in coeff_whitelist:
+    elif len(regex_match([c],coeff_whitelist)) == 0:
         continue
-    elif len(runs_whitelist) > 0 and not r in runs_whitelist:
+    elif len(regex_match([r],runs_whitelist)) == 0:
         continue
     gridpacks.append(f)
 
@@ -100,7 +117,8 @@ lhe_resources = Category(
     name='lhe',
     cores=1,
     memory=1200,
-    disk=1000
+    disk=1000,
+    tasks_min=12
 )
 
 wf_steps = ['lhe']
@@ -127,7 +145,6 @@ for idx,gridpack in enumerate(gridpacks):
 
     lhe = Workflow(
         label='lhe_step_%s_%s_%s' % (p,c,r),
-        #command='cmsRun %s' % (lhe_fragment),
         command='cmsRun %s' % (wf_fragments['lhe']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge the output files, to keep individuals as small as possible
@@ -154,6 +171,9 @@ config = Config(
     advanced=AdvancedOptions(
         bad_exit_codes=[127, 160],
         log_level=1,
-        payload=10
+        payload=10,
+        xrootd_servers=['ndcms.crc.nd.edu',
+                       'cmsxrootd.fnal.gov',
+                       'deepthought.crc.nd.edu']
     )
 )

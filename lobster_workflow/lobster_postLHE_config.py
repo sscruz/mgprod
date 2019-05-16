@@ -4,6 +4,9 @@ import os
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
 
+sys.path.append(os.getcwd())
+from helpers.utils import regex_match
+
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
 username = "awightma"
@@ -15,7 +18,7 @@ RUN_SETUP = 'mg_studies'
 input_version  = "v1"   # The version index for the INPUT directory
 output_version = "v1"   # The version index for the OUTPUT directory
 
-grp_tag        = "2018_04_17/500k_events"   # For 'local' and 'mg_studies' setups
+grp_tag        = "2019_04_19/ttZRunCard"   # For 'local' and 'mg_studies' setups
 production_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -74,11 +77,11 @@ for fd in os.listdir(input_path_full):
         continue
     arr = fd.split('_')
     p,c,r = arr[2],arr[3],arr[4]
-    if len(process_whitelist) > 0 and not p in process_whitelist:
+    if len(regex_match([p],process_whitelist)) == 0:
         continue
-    elif len(coeff_whitelist) > 0 and not c in coeff_whitelist:
+    elif len(regex_match([c],coeff_whitelist)) == 0:
         continue
-    elif len(runs_whitelist) > 0 and not r in runs_whitelist:
+    elif len(regex_match([r],runs_whitelist)) == 0:
         continue
     lhe_dirs.append(fd)
 
@@ -126,7 +129,9 @@ gs_resources = Category(
     name='gs',
     cores=6,
     memory=3000,
-    disk=3000
+    disk=3000,
+    tasks_min=12,
+    runtime=3600,
 )
 
 digi_resources = Category(
@@ -134,6 +139,7 @@ digi_resources = Category(
     cores=4,
     memory=5000,
     disk=3000,
+    runtime=3600,
 )
 
 reco_resources = Category(
@@ -141,6 +147,7 @@ reco_resources = Category(
     cores=3,
     memory=3500,
     disk=1500,
+    runtime=3600,
 )
 
 maod_resources = Category(
@@ -148,6 +155,7 @@ maod_resources = Category(
     cores=2,
     memory=2500,
     disk=1000,
+    runtime=3600,
 )
 #################################################################
 
@@ -161,7 +169,10 @@ fragment_map = {
     },
     'ttH': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
-    }
+    },
+    'ttlnuJet': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
+    },
 }
 
 wf = []
@@ -248,6 +259,9 @@ config = Config(
     advanced=AdvancedOptions(
         bad_exit_codes=[127, 160],
         log_level=1,
-        payload=10
+        payload=10,
+        xrootd_servers=['ndcms.crc.nd.edu',
+                       'cmsxrootd.fnal.gov',
+                       'deepthought.crc.nd.edu']
     )
 )
