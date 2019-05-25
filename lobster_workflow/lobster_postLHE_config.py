@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
@@ -173,6 +174,9 @@ fragment_map = {
     'ttlnuJet': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
+    'tllq4f': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    }
 }
 
 wf = []
