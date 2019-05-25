@@ -21,7 +21,7 @@ RUN_SETUP = 'mg_studies'
 #RUN_SETUP = 'lobster_test'
 
 # Where the gridpacks are located
-input_path      = "/store/user/awightma/gridpack_scans/2018_08_24/"
+input_path      = "/store/user/awightma/gridpack_scans/2019_04_19/"
 input_path_full = "/hadoop" + input_path
 
 version = "v1"
@@ -29,9 +29,9 @@ grp_tag = "2019_04_19/ttZRunCard"
 production_tag = "Round4/Batch5"
 
 # Only run over gridpacks from specific processes/coeffs/runs
-process_whitelist = ["ttH","ttlnu"]
-coeff_whitelist   = ["16DOldLimitsAxisScan"]
-runs_whitelist    = ["run1"]    # (i.e. MG starting points)
+process_whitelist = []
+coeff_whitelist   = []
+runs_whitelist    = []    # (i.e. MG starting points)
 
 master_label = 'EFT_LHE_%s' % (timestamp_tag)
 #master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
