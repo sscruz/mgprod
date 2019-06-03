@@ -25,13 +25,13 @@ input_path      = "/store/user/awightma/gridpack_scans/2019_04_19/"
 input_path_full = "/hadoop" + input_path
 
 version = "v1"
-grp_tag = "2019_04_19/ttZRunCard"
+grp_tag = "2019_04_19/ttlnu-TestExample"
 production_tag = "Round4/Batch5"
 
 # Only run over gridpacks from specific processes/coeffs/runs
-process_whitelist = []
-coeff_whitelist   = []
-runs_whitelist    = []    # (i.e. MG starting points)
+process_whitelist = ['^ttlnu$']
+coeff_whitelist   = ['^NoDim6$']
+runs_whitelist    = ['^run0$']    # (i.e. MG starting points)
 
 master_label = 'EFT_LHE_%s' % (timestamp_tag)
 #master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
