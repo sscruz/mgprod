@@ -126,37 +126,38 @@ for fd in os.listdir(input_path_full):
 #   Memory: 16000 | 8000
 #   Disk:   13000 | 6500
 #################################################################
+# Need to be careful with using 'runetime' setting, as it can cause us to exceed the workers resources
 gs_resources = Category(
     name='gs',
     cores=6,
     memory=3000,
     disk=3000,
     tasks_min=12,
-    runtime=3600,
+    #runtime=3600,
 )
 
 digi_resources = Category(
     name='digi',
-    cores=4,
-    memory=5000,
-    disk=3000,
-    runtime=3600,
+    cores=6,
+    memory=7000,
+    disk=4000,
+    #runtime=3600,
 )
 
 reco_resources = Category(
     name='reco',
     cores=3,
     memory=3500,
-    disk=1500,
-    runtime=3600,
+    disk=2000,
+    #runtime=3600,
 )
 
 maod_resources = Category(
     name='maod',
     cores=2,
     memory=2500,
-    disk=1000,
-    runtime=3600,
+    disk=2000,
+    #runtime=3600,
 )
 #################################################################
 
