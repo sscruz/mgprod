@@ -175,6 +175,12 @@ fragment_map = {
     'tllq4f': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
+    'tllq4fNoHiggs': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
+    'tllq4fMatched': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
     'ttHJet': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttHJets_1_cfg.py'
     },
@@ -188,7 +194,7 @@ fragment_map = {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
     'tHq4fMatched': {# Uses same fragment as tllq4f
-        'gs': 'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
 
     }
 

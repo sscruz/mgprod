@@ -7,7 +7,8 @@ import sys
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, MultiProductionDataset, StorageConfiguration, Workflow
 
-sys.path.append(os.getcwd())
+#sys.path.append(os.getcwd())
+sys.path.append('/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow')
 from helpers.utils import regex_match
 
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
@@ -135,7 +136,7 @@ for idx,gridpack in enumerate(gridpacks):
     print "\t[%d/%d] Gridpack: %s" % (idx+1,len(gridpacks),gridpack)
     arr = gridpack.split('_')
     p,c,r = arr[0],arr[1],arr[2]
-
+    c = c.replace('-','')   # Lobster doesn't like names with dashes in them
     wf_fragments = {}
     for step in wf_steps:
         if fragment_map.has_key(p) and fragment_map[p].has_key(step):
