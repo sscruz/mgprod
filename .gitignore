@@ -5,3 +5,10 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Misc local files
+WIP_*
+*.txt
+*.log
+test.py
+trash.py
