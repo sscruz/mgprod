@@ -172,12 +172,26 @@ fragment_map = {
     'ttH': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
     },
+    'tllq4f': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
+    'ttHJet': {
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttHJets_1_cfg.py'
+    },
     'ttlnuJet': {
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
-    'tllq4f': {
+    'tllq4fMatchedNoHiggs': {# Uses same fragment as tllq4f
         'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
+    'ttllNuNuJetNoHiggs': {# Uses same fragment as ttlnuJet
+        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
+    },
+    'tHq4fMatched': {# Uses same fragment as tllq4f
+        'gs': 'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+
     }
+
 }
 
 wf = []
