@@ -129,6 +129,12 @@ fragment_map = {
     },
 }
 
+event_multiplier = {
+    'default': 1,
+    'ttHJet': 4,
+    'ttllNuNuJetNoHiggs': 3
+}
+
 wf = []
 
 print "Generating workflows:"
@@ -143,7 +149,10 @@ for idx,gridpack in enumerate(gridpacks):
             wf_fragments[step] = fragment_map[p][step]
         else:
             wf_fragments[step] = fragment_map['default'][step]
-
+    multiplier = event_multiplier['default']
+    if event_multiplier.has_key(p):
+        multiplier = event_multiplier[p]
+    nevents = int(multiplier*events_per_gridpack)
     lhe = Workflow(
         label='lhe_step_%s_%s_%s' % (p,c,r),
         command='cmsRun %s' % (wf_fragments['lhe']),
@@ -154,7 +163,7 @@ for idx,gridpack in enumerate(gridpacks):
         outputs=['HIG-RunIIFall17wmLHE-00000ND.root'],
         dataset=MultiProductionDataset(
             gridpacks=gridpack,
-            events_per_gridpack=events_per_gridpack,
+            events_per_gridpack=nevents,
             events_per_lumi=events_per_lumi,
             lumis_per_task=1,
             randomize_seeds=True
