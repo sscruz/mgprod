@@ -134,6 +134,7 @@ gs_resources = Category(
     disk=3000,
     tasks_min=12,
     #runtime=3600,
+    mode='fixed'
 )
 
 digi_resources = Category(
@@ -142,6 +143,7 @@ digi_resources = Category(
     memory=7000,
     disk=4000,
     #runtime=3600,
+    mode='fixed'
 )
 
 reco_resources = Category(
@@ -150,6 +152,7 @@ reco_resources = Category(
     memory=3500,
     disk=2000,
     #runtime=3600,
+    mode='fixed'
 )
 
 maod_resources = Category(
@@ -158,6 +161,7 @@ maod_resources = Category(
     memory=2500,
     disk=2000,
     #runtime=3600,
+    mode='fixed'
 )
 #################################################################
 
