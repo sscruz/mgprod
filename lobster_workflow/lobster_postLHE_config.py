@@ -16,40 +16,40 @@ username = "awightma"
 #RUN_SETUP = 'full_production'
 RUN_SETUP = 'mg_studies'
 
-input_version  = "v1"   # The version index for the INPUT directory
-output_version = "v1"   # The version index for the OUTPUT directory
+in_ver  = "v1"   # The version index for the INPUT directory
+out_ver = "v1"   # The version index for the OUTPUT directory
 
-grp_tag        = "2019_04_19/ttZRunCard"   # For 'local' and 'mg_studies' setups
-production_tag = "Round1/Batch1"            # For 'full_production' setup
+grp_tag  = "2019_04_19/ttZRunCard"      # For 'local' and 'mg_studies' setups
+prod_tag = "Round1/Batch1"              # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
 process_whitelist = []
 coeff_whitelist   = []
 runs_whitelist    = []  # (i.e. MG starting points)
 
-master_label = 'EFT_ALL_postLHE_%s' % (timestamp_tag)
+master_label = 'EFT_ALL_postLHE_{tstamp}'.format(tstamp=timestamp_tag)
 
 if RUN_SETUP == 'local':
     # For quick generic lobster workflow testing
-    input_path     = "/store/user/%s/LHE_step/%s/%s/" % (username,grp_tag,input_version)
-    output_version = "lobster_"+ timestamp_tag
-    output_path  = "/store/user/$USER/tests/"       + output_version
-    workdir_path = "/tmpscratch/users/$USER/tests/" + output_version
-    plotdir_path = "~/www/lobster/tests/"           + output_version
+    test_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
+    input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
+    output_path  = "/store/user/$USER/tests/{tag}".format(tag=test_tag)
+    workdir_path = "/tmpscratch/users/$USER/tests/{tag}".format(tag=test_tag)
+    plotdir_path = "~/www/lobster/tests/{tag}".format(tag=test_tag)
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
-    input_path   = "/store/user/%s/LHE_step/%s/%s/" % (username,grp_tag,input_version)
-    output_path  = "/store/user/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
-    workdir_path = "/tmpscratch/users/$USER/postLHE_step/%s/%s" % (grp_tag,output_version)
-    plotdir_path = "~/www/lobster/postLHE_step/%s/%s" % (grp_tag,output_version)
+    input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
+    output_path  = "/store/user/$USER/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
 elif RUN_SETUP == 'full_production':
     # For Large MC production
-    input_path   = "/store/user/%s/FullProduction/%s/LHE_step/%s/" % (username,production_tag,input_version)
-    output_path  = "/store/user/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
-    workdir_path = "/tmpscratch/users/$USER/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
-    plotdir_path = "~/www/lobster/FullProduction/%s/postLHE_step/%s" % (production_tag,output_version)
+    input_path   = "/store/user/{user}/FullProduction/{tag}/LHE_step/{ver}".format(user=username,tag=prod_tag,ver=in_ver)
+    output_path  = "/store/user/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=prod_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=prod_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/FullProduction/{tag}/postLHE_step/{ver}".format(tag=prod_tag,ver=out_ver)
 else:
-    print "Unknown run setup, %s" % (RUN_SETUP)
+    print "Unknown run setup, {setup}".format(setup=RUN_SETUP)
     raise ValueError
 
 input_path_full = "/hadoop" + input_path
@@ -208,7 +208,7 @@ wf = []
 
 print "Generating workflows:"
 for idx,lhe_dir in enumerate(lhe_dirs):
-    print "\t[%d/%d] LHE Input: %s" % (idx+1,len(lhe_dirs),lhe_dir)
+    print "\t[{0}/{1}] LHE Input: {dir}".format(idx+1,len(lhe_dirs),dir=lhe_dir)
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
 
@@ -220,8 +220,8 @@ for idx,lhe_dir in enumerate(lhe_dirs):
             wf_fragments[step] = fragment_map['default'][step]
 
     gs = Workflow(
-        label='gs_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (wf_fragments['gs']),
+        label='gs_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
+        command='cmsRun {cfg}'.format(wf_fragments['gs']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,
@@ -236,8 +236,8 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     )
 
     digi = Workflow(
-        label='digi_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (wf_fragments['digi']),
+        label='digi_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
+        command='cmsRun {cfg}'.format(cfg=wf_fragments['gs']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,    # Save the GEN-SIM step
@@ -250,8 +250,8 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     )
 
     reco = Workflow(
-        label='reco_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (wf_fragments['reco']),
+        label='reco_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
+        command='cmsRun {cfg}'.format(cfg=wf_fragments['reco']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=True,
@@ -264,15 +264,15 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     )
 
     maod = Workflow(
-        label='mAOD_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (wf_fragments['maod']),
+        label='mAOD_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
+        command='cmsRun {cfg}'.format(cfg=wf_fragments['maod']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
         merge_size='512M',
         cleanup_input=True,
         outputs=['HIG-RunIIFall17MiniAOD-00821ND.root'],
         dataset=ParentDataset(
             parent=reco,
-            units_per_task=1
+            units_per_task=2
         ),
         category=maod_resources
     )

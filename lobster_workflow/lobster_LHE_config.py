@@ -27,7 +27,7 @@ input_path_full = "/hadoop" + input_path
 
 version = "v1"
 grp_tag = "2019_04_19/ttlnu-TestExample"
-production_tag = "Round4/Batch5"
+prod_tag = "Round4/Batch5"
 
 # Only run over gridpacks from specific processes/coeffs/runs
 process_whitelist = ['^ttlnu$']
@@ -41,18 +41,18 @@ if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
     input_path      = "/afs/crc.nd.edu/user/a/awightma/Public/git_repos/mgprod/lobster_workflow/local_gridpacks/"
     input_path_full = input_path
-    version = "lobster_" + timestamp_tag
-    output_path  = "/store/user/$USER/tests/"       + version
-    workdir_path = "/tmpscratch/users/$USER/tests/" + version
-    plotdir_path = "~/www/lobster/tests/"           + version
+    test_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
+    output_path  = "/store/user/$USER/tests/{tag}".format(tag=test_tag)
+    workdir_path = "/tmpscratch/users/$USER/tests/{tag}".format(tag=test_tag)
+    plotdir_path = "~/www/lobster/tests/{tag}".format(tag=test_tag)
     inputs = [
         "file://" + input_path,    # For running on gridpacks in a local directory
     ]
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
-    output_path  = "/store/user/$USER/LHE_step/%s/" % (grp_tag)       + version
-    workdir_path = "/tmpscratch/users/$USER/LHE_step/%s/" % (grp_tag) + version
-    plotdir_path = "~/www/lobster/LHE_step/%s/" % (grp_tag)           + version
+    output_path  = "/store/user/$USER/LHE_step/{tag}/{ver}".format(tag=grp_tag,ver=version)
+    workdir_path = "/tmpscratch/users/$USER/LHE_step/{tag}/{ver}".format(tag=grp_tag,ver=version)
+    plotdir_path = "~/www/lobster/LHE_step/{tag}/{ver}".format(tag=grp_tag,ver=version)
     inputs = [
         "hdfs://eddie.crc.nd.edu:19000"  + input_path,
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
@@ -61,9 +61,9 @@ elif RUN_SETUP == 'mg_studies':
     ]
 elif RUN_SETUP == 'full_production':
     # For Large MC production
-    output_path  = "/store/user/$USER/FullProduction/%s/LHE_step/%s" % (production_tag,version)
-    workdir_path = "/tmpscratch/users/$USER/FullProduction/%s/LHE_step/%s" % (production_tag,version)
-    plotdir_path = "~/www/lobster/FullProduction/%s/LHE_step/%s" % (production_tag,version)
+    output_path  = "/store/user/$USER/FullProduction/{tag}/LHE_step/{ver}".format(tag=prod_tag,ver=version)
+    workdir_path = "/tmpscratch/users/$USER/FullProduction/{tag}/LHE_step/{ver}".format(tag=prod_tag,ver=version)
+    plotdir_path = "~/www/lobster/FullProduction/{tag}/LHE_step/{ver}".format(tag=prod_tag,ver=version)
     inputs = [
         "hdfs://eddie.crc.nd.edu:19000"  + input_path,
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
@@ -73,10 +73,10 @@ elif RUN_SETUP == 'full_production':
     ]
 elif RUN_SETUP == 'lobster_test':
     # For lobster workflow tests
-    grp_tag = "tests/lobster_%s" % (timestamp_tag)
-    output_path  = "/store/user/$USER/LHE_step/%s/" % (grp_tag)       + version
-    workdir_path = "/tmpscratch/users/$USER/LHE_step/%s/" % (grp_tag) + version
-    plotdir_path = "~/www/lobster/LHE_step/%s/" % (grp_tag)           + version
+    grp_tag = "lobster_{tstamp}".format(timestamp_tag)
+    output_path  = "/store/user/$USER/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)
+    workdir_path = "/tmpscratch/users/$USER/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)
+    plotdir_path = "~/www/lobster/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)
     inputs = [
         "hdfs://eddie.crc.nd.edu:19000"  + input_path,
         "root://deepthought.crc.nd.edu/" + input_path,  # Note the extra slash after the hostname!
@@ -132,17 +132,19 @@ fragment_map = {
 event_multiplier = {
     'default': 1,
     'ttHJet': 4,
-    'ttllNuNuJetNoHiggs': 3
+    'ttlnuJet': 2,
+    'tHq4fMatched': 1.2,
+    'tllq4fMatchedNoHiggs': 1.2,
+    'ttllNuNuJetNoHiggs': 4
 }
 
 wf = []
 
 print "Generating workflows:"
 for idx,gridpack in enumerate(gridpacks):
-    print "\t[%d/%d] Gridpack: %s" % (idx+1,len(gridpacks),gridpack)
     arr = gridpack.split('_')
     p,c,r = arr[0],arr[1],arr[2]
-    c = c.replace('-','')   # Lobster doesn't like names with dashes in them
+    c = c.replace('-','')   # Lobster doesn't like labels with dashes in them
     wf_fragments = {}
     for step in wf_steps:
         if fragment_map.has_key(p) and fragment_map[p].has_key(step):
@@ -153,9 +155,10 @@ for idx,gridpack in enumerate(gridpacks):
     if event_multiplier.has_key(p):
         multiplier = event_multiplier[p]
     nevents = int(multiplier*events_per_gridpack)
+    print "\t[{0}/{1}] Gridpack: {gp} (nevts {events})".format(idx+1,len(gridpacks),gp=gridpack,events=nevents)
     lhe = Workflow(
-        label='lhe_step_%s_%s_%s' % (p,c,r),
-        command='cmsRun %s' % (wf_fragments['lhe']),
+        label='lhe_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
+        command='cmsRun {cfg}'.format(cfg=wf_fragments['lhe']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge the output files, to keep individuals as small as possible
         cleanup_input=False,
