@@ -125,7 +125,7 @@ lhe_resources = Category(
 wf_steps = ['lhe']
 fragment_map = {
     'default': {
-        'lhe': 'fragments/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
+        'lhe': 'python_cfgs/LHE/HIG-RunIIFall17wmLHE-00000_1_cfg.py',
     },
 }
 

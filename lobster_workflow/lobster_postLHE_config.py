@@ -168,37 +168,37 @@ maod_resources = Category(
 wf_steps = ['gs','digi','reco','maod']
 fragment_map = {
     'default': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000_1_cfg.py',
-        'digi': 'fragments/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
-        'reco': 'fragments/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
-        'maod': 'fragments/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000_1_cfg.py',
+        'digi': 'python_cfgs/DR/HIG-RunIIFall17DRPremix-00823_1_cfg.py',
+        'reco': 'python_cfgs/DR/HIG-RunIIFall17DRPremix-00823_2_cfg.py',
+        'maod': 'python_cfgs/MAOD/HIG-RunIIFall17MiniAOD-00821_1_cfg.py',
     },
     'ttH': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-ttH_1_cfg.py',
     },
     'tllq4f': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'tllq4fNoHiggs': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'tllq4fMatched': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'ttHJet': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttHJets_1_cfg.py'
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-ttHJets_1_cfg.py'
     },
     'ttlnuJet': {
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
     'tllq4fMatchedNoHiggs': {# Uses same fragment as tllq4f
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'ttllNuNuJetNoHiggs': {# Uses same fragment as ttlnuJet
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
     'tHq4fMatched': {# Uses same fragment as tllq4f
-        'gs':   'fragments/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
 
     }
 
