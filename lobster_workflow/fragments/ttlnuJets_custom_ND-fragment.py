@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 # link to cards:
-# https://github.com/cms-sw/genproductions/tree/1dbb76303f4efe786c01d52dfd13d685aa412abb/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/TTWJets/TTWJets_5f_LO_MLM
+# Customized fragment
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/ttW012j_5f/v1/ttW012j_5f.tar.xz'),
@@ -25,21 +25,29 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
         pythia8CP5SettingsBlock,
         processParameters = cms.vstring(
             'JetMatching:setMad = off',
-            'JetMatching:scheme = 1',
+            'JetMatching:scheme = 1', 
             'JetMatching:merge = on',
             'JetMatching:jetAlgorithm = 2',
-            'JetMatching:etaJetMax = 5.',
+            'JetMatching:etaJetMax = 999.',
             'JetMatching:coneRadius = 1.',
             'JetMatching:slowJetPower = 1',
-            'JetMatching:qCut = 60.',       # this is the actual merging scale
-            'JetMatching:nQmatch = 5',      # 5 for 5-flavour scheme (matching of b-quarks)
-            'JetMatching:nJetMax = 5',      # number of partons in born matrix element for highest multiplicity
-            'JetMatching:doShowerKt = off', # off for MLM matching, turn on for shower-kT matching
+            'JetMatching:qCut = 19.',
+            'JetMatching:nQmatch = 5',
+            'JetMatching:nJetMax = 1',      # The MG final state should have exactly 1 jet
+            'JetMatching:doShowerKt = off',
+            #'TimeShower:mMaxGamma = 4.0',
+            #'UncertaintyBands:doVariations = on',
+            #'UncertaintyBands:List = {isrRedHi isr:muRfac=0.707,fsrRedHi fsr:muRfac=0.707,isrRedLo isr:muRfac=1.414,fsrRedLo fsr:muRfac=1.414,isrDefHi isr:muRfac=0.5, fsrDefHi fsr:muRfac=0.5,isrDefLo isr:muRfac=2.0,fsrDefLo fsr:muRfac=2.0,isrConHi isr:muRfac=0.25, fsrConHi fsr:muRfac=0.25,isrConLo isr:muRfac=4.0,fsrConLo fsr:muRfac=4.0}',
+            #'UncertaintyBands:MPIshowers = on',
+            #'UncertaintyBands:overSampleFSR = 10.0',
+            #'UncertaintyBands:overSampleISR = 10.0',
+            #'UncertaintyBands:FSRpTmin2Fac = 20',
+            #'UncertaintyBands:ISRpTmin2Fac = 1'
         ),
         parameterSets = cms.vstring(
             'pythia8CommonSettings',
             'pythia8CP5Settings',
-            'processParameters',
+            'processParameters'
         )
     )
 )

@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 # link to cards:
-# https://github.com/cms-sw/genproductions/tree/1dbb76303f4efe786c01d52dfd13d685aa412abb/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/TTWJets/TTWJets_5f_LO_MLM
+# Customized fragment
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/ttW012j_5f/v1/ttW012j_5f.tar.xz'),
@@ -25,21 +25,27 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
         pythia8CP5SettingsBlock,
         processParameters = cms.vstring(
             'JetMatching:setMad = off',
-            'JetMatching:scheme = 1',
+            'JetMatching:scheme = 1', 
             'JetMatching:merge = on',
-            'JetMatching:jetAlgorithm = 2',
-            'JetMatching:etaJetMax = 5.',
-            'JetMatching:coneRadius = 1.',
-            'JetMatching:slowJetPower = 1',
-            'JetMatching:qCut = 60.',       # this is the actual merging scale
-            'JetMatching:nQmatch = 5',      # 5 for 5-flavour scheme (matching of b-quarks)
-            'JetMatching:nJetMax = 5',      # number of partons in born matrix element for highest multiplicity
-            'JetMatching:doShowerKt = off', # off for MLM matching, turn on for shower-kT matching
+            'JetMatching:jetAlgorithm = 2', 
+            'JetMatching:etaJetMax = 999.', 
+            'JetMatching:coneRadius = 1.', 
+            'JetMatching:slowJetPower = 1', 
+            'JetMatching:qCut = 19',
+            'JetMatching:nQmatch = 5', 
+            'JetMatching:doShowerKt = off',
+            'JetMatching:nJetMax = 1',
+            'SLHA:useDecayTable = off',  # Use pythia8s own decay mode instead of decays defined in LH accord
+            '25:m0 = 125.0',
+            '23:mMin = 0.05',       # Solve problem with mZ cut
+            '24:mMin = 0.05',       # Solve problem with mW cut
+            '25:onMode = on',       # Allow all higgs decays 
+            '25:offIfAny = 5 5',    # Switch decays of b quarks off
         ),
         parameterSets = cms.vstring(
             'pythia8CommonSettings',
             'pythia8CP5Settings',
-            'processParameters',
+            'processParameters'
         )
     )
 )

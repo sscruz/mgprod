@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 # link to cards:
-# https://github.com/cms-sw/genproductions/tree/1dbb76303f4efe786c01d52dfd13d685aa412abb/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/TTWJets/TTWJets_5f_LO_MLM
+# Customized fragment
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
     args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/ttW012j_5f/v1/ttW012j_5f.tar.xz'),
@@ -26,7 +26,7 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
         processParameters = cms.vstring(
             'JetMatching:setMad = on', 
             'JetMatching:scheme = 1', 
-            'JetMatching:merge = off',
+            'JetMatching:merge = off',      # No jet merging
             'JetMatching:jetAlgorithm = 2', 
             'JetMatching:etaJetMax = 999.', 
             'JetMatching:coneRadius = 1.', 
@@ -34,7 +34,7 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
             'JetMatching:qCut = 60.', 
             'JetMatching:nQmatch = 5', 
             'JetMatching:doShowerKt = off',
-            'JetMatching:nJetMax = 1',   # For ttHJet process
+            'JetMatching:nJetMax = 1',
             'SLHA:useDecayTable = off',  # Use pythia8s own decay mode instead of decays defined in LH accord
             '25:m0 = 125.0',
             '23:mMin = 0.05',       # Solve problem with mZ cut
@@ -42,9 +42,10 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
             '25:onMode = on',       # Allow all higgs decays 
             '25:offIfAny = 5 5',    # Switch decays of b quarks off
         ),
-        parameterSets = cms.vstring('pythia8CommonSettings',
-                                    'pythia8CP5Settings',
-                                    'processParameters',
-                                    )
+        parameterSets = cms.vstring(
+            'pythia8CommonSettings',
+            'pythia8CP5Settings',
+            'processParameters'
+        )
     )
 )
