@@ -24,23 +24,17 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
         pythia8CommonSettingsBlock,
         pythia8CP5SettingsBlock,
         processParameters = cms.vstring(
-            'JetMatching:setMad = on', 
-            'JetMatching:scheme = 1', 
-            'JetMatching:merge = off',      # No jet merging
-            'JetMatching:jetAlgorithm = 2', 
-            'JetMatching:etaJetMax = 999.', 
-            'JetMatching:coneRadius = 1.', 
-            'JetMatching:slowJetPower = 1', 
-            'JetMatching:qCut = 60.', 
-            'JetMatching:nQmatch = 5', 
-            'JetMatching:doShowerKt = off',
+            'JetMatching:setMad = on',
+            'JetMatching:scheme = 1',
+            'JetMatching:merge = off',
+            'JetMatching:jetAlgorithm = 2',
+            'JetMatching:etaJetMax = 5.',
+            'JetMatching:coneRadius = 1.',
+            'JetMatching:slowJetPower = 1',
+            'JetMatching:qCut = 60.',
+            'JetMatching:nQmatch = 5',
             'JetMatching:nJetMax = 0',
-            'SLHA:useDecayTable = off',  # Use pythia8s own decay mode instead of decays defined in LH accord
-            '25:m0 = 125.0',
-            '23:mMin = 0.05',       # Solve problem with mZ cut
-            '24:mMin = 0.05',       # Solve problem with mW cut
-            '25:onMode = on',       # Allow all higgs decays 
-            '25:offIfAny = 5 5',    # Switch decays of b quarks off
+            'JetMatching:doShowerKt = off',
         ),
         parameterSets = cms.vstring(
             'pythia8CommonSettings',
