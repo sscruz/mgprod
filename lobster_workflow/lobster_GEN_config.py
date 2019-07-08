@@ -96,10 +96,11 @@ for fd in os.listdir(input_path_full):
 # Need to be careful with using 'runetime' setting, as it can cause us to exceed the workers resources
 gen_resources = Category(
     name='gen',
-    cores=6,
-    memory=3000,
-    disk=3000,
+    cores=1,
+    memory=1200,
+    disk=1000,
     tasks_min=12,
+    tasks_max=3000,
     mode='fixed'
 )
 #################################################################
@@ -142,7 +143,7 @@ wf = []
 
 print "Generating workflows:"
 for idx,lhe_dir in enumerate(lhe_dirs):
-    print "\t[{n}/{tot} LHE Input: {dir}".format(n=idx+1,len(lhe_dirs),lhe_dir)
+    print "\t[{n}/{tot}] LHE Input: {dir}".format(n=idx+1,tot=len(lhe_dirs),dir=lhe_dir)
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
 
@@ -155,15 +156,15 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     gen = Workflow(
         label='gen_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
-        command='cmsRun {cfg}'.format(wf_fragments['gen']),
+        command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
         sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
         merge_size=-1,  # Don't merge files we don't plan to keep
         cleanup_input=False,
         globaltag=False,
-        output=['GEN-00000.root'],
+        outputs=['GEN-00000.root'],
         dataset=Dataset(
             files=lhe_dir,
-            files_per_task=1,
+            files_per_task=10,
             patterns=["*.root"]
         ),
         category=gen_resources
