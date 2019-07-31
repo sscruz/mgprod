@@ -114,12 +114,14 @@ for f in os.listdir(input_path_full):
         continue
     gridpacks.append(f)
 
+# Note: The tllq4fMatchedNoSchanW gridpacks seem to require ~2600 MB disk
+
 lhe_resources = Category(
     name='lhe',
+    #mode='fixed',
     cores=1,
     memory=1200,
-    disk=1000,
-    tasks_min=12
+    disk=2900
 )
 
 wf_steps = ['lhe']
