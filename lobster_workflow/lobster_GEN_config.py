@@ -159,7 +159,6 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     print "\t[{n}/{tot}] LHE Input: {dir}".format(n=idx+1,tot=len(lhe_dirs),dir=lhe_dir)
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
-
     for mod_tag,sed_str in gen_mods.iteritems():
         wf_fragments = {}
         for step in wf_steps:
@@ -176,6 +175,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
             if sed_str:
                 run_process(['sed','-i','-e',sed_str,mod_loc])
             wf_fragments[step] = mod_loc
+        if mod_tag == 'base': mod_tag = ''
         gen = Workflow(
             label='gen_step_{p}_{c}{mod}_{r}'.format(p=p,c=c,mod=mod_tag,r=r),
             command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
