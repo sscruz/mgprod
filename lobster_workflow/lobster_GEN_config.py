@@ -1,12 +1,15 @@
 import datetime
 import os
 import sys
+import shutil
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
 
 sys.path.append(os.getcwd())
 from helpers.utils import regex_match
+
+MODIFIED_CFG_DIR = "python_cfgs/modified"
 
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
@@ -20,6 +23,7 @@ in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
 grp_tag  = "2019_04_19/ttZRunCard"   # For 'local' and 'mg_studies' setups
+out_tag  = "2019_04_19/ttZRunCard"
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -39,9 +43,9 @@ if RUN_SETUP == 'local':
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
     input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
-    output_path  = "/store/user/$USER/genOnly_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
-    workdir_path = "/tmpscratch/users/$USER/genOnly_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
-    plotdir_path = "~/www/lobster/genOnly_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    output_path  = "/store/user/$USER/genOnly_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/genOnly_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/genOnly_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
 elif RUN_SETUP == 'full_production':
     # For Large MC production
     input_path   = "/store/user/{user}/FullProduction/{tag}/{ver}".format(user=username,tag=prod_tag,ver=in_ver)
@@ -149,11 +153,22 @@ for idx,lhe_dir in enumerate(lhe_dirs):
 
     wf_fragments = {}
     for step in wf_steps:
+        #if fragment_map.has_key(p) and fragment_map[p].has_key(step):
+        #    wf_fragments[step] = fragment_map[p][step]
+        #else:
+        #    wf_fragments[step] = fragment_map['default'][step]
         if fragment_map.has_key(p) and fragment_map[p].has_key(step):
-            wf_fragments[step] = fragment_map[p][step]
+            template_loc = fragment_map[p][step]
         else:
-            wf_fragments[step] = fragment_map['default'][step]
+            template_loc = fragment_map['default'][step]
+        head,tail = os.path.split(template_loc)
+        # This should be a unique identifier within a single lobster master to ensure we dont overwrite a cfg file to early
+        mod_tag = 'idx{0}'.format(idx)
+        tail = tail.replace("cfg.py","{tag}_cfg.py".format(tag=mod_tag)
+        mod_loc = os.path.join(MODIFIED_CFG_DIR,tail)
+        shutil.copy(template_loc,mod_loc)
 
+        wf_fragments[step] = mod_loc
     gen = Workflow(
         label='gen_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
         command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
