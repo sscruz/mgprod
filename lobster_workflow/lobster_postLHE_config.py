@@ -20,6 +20,7 @@ in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
 grp_tag  = "2019_04_19/ttZRunCard"      # For 'local' and 'mg_studies' setups
+out_tag  = "2019_04_19/ttZRunCard"
 prod_tag = "Round1/Batch1"              # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -39,9 +40,9 @@ if RUN_SETUP == 'local':
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
     input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
-    output_path  = "/store/user/$USER/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
-    workdir_path = "/tmpscratch/users/$USER/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
-    plotdir_path = "~/www/lobster/postLHE_step/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    output_path  = "/store/user/$USER/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
 elif RUN_SETUP == 'full_production':
     # For Large MC production
     input_path   = "/store/user/{user}/FullProduction/{tag}/LHE_step/{ver}".format(user=username,tag=prod_tag,ver=in_ver)
@@ -140,8 +141,8 @@ gs_resources = Category(
 digi_resources = Category(
     name='digi',
     cores=6,
-    memory=7000,
-    disk=4000,
+    memory=7800,
+    disk=6000,
     #runtime=3600,
     mode='fixed'
 )
@@ -151,7 +152,7 @@ reco_resources = Category(
     cores=3,
     memory=3500,
     disk=2000,
-    #runtime=3600,
+    #runtime=1800,
     mode='fixed'
 )
 
@@ -160,7 +161,7 @@ maod_resources = Category(
     cores=2,
     memory=2500,
     disk=2000,
-    #runtime=3600,
+    #runtime=1800,
     mode='fixed'
 )
 #################################################################
@@ -183,6 +184,9 @@ fragment_map = {
         'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'tllq4fMatched': {
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
+    'tllq4fMatchedNoSchanW': {
         'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
     },
     'ttHJet': {
@@ -258,7 +262,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         outputs=['HIG-RunIIFall17DRPremix-00823ND.root'],
         dataset=ParentDataset(
             parent=digi,
-            units_per_task=1
+            units_per_task=2
         ),
         category=reco_resources
     )
@@ -272,7 +276,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         outputs=['HIG-RunIIFall17MiniAOD-00821ND.root'],
         dataset=ParentDataset(
             parent=reco,
-            units_per_task=2
+            units_per_task=3
         ),
         category=maod_resources
     )
