@@ -7,7 +7,7 @@ from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
 
 sys.path.append(os.getcwd())
-from helpers.utils import regex_match
+from helpers.utils import regex_match, run_process
 
 MODIFIED_CFG_DIR = "python_cfgs/modified"
 
@@ -22,8 +22,9 @@ RUN_SETUP = 'mg_studies'
 in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-grp_tag  = "2019_04_19/ttZRunCard"   # For 'local' and 'mg_studies' setups
-out_tag  = "2019_04_19/ttZRunCard"
+grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
+out_tag  = "2019_04_19/ttHJet-xqcutStudies"
+#out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -143,6 +144,14 @@ fragment_map = {
     }
 }
 
+# For each input, create multiple output workflows modifying a single GEN config attribute
+gen_mods = {}
+gen_mods['base'] = ''
+gen_mods['qCut10'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 10|g'
+gen_mods['qCut25'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 25|g'
+gen_mods['qCut40'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 40|g'
+gen_mods['qCut60'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 60|g'
+
 wf = []
 
 print "Generating workflows:"
@@ -151,41 +160,38 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     arr = lhe_dir.split('_')
     p,c,r = arr[2],arr[3],arr[4]
 
-    wf_fragments = {}
-    for step in wf_steps:
-        #if fragment_map.has_key(p) and fragment_map[p].has_key(step):
-        #    wf_fragments[step] = fragment_map[p][step]
-        #else:
-        #    wf_fragments[step] = fragment_map['default'][step]
-        if fragment_map.has_key(p) and fragment_map[p].has_key(step):
-            template_loc = fragment_map[p][step]
-        else:
-            template_loc = fragment_map['default'][step]
-        head,tail = os.path.split(template_loc)
-        # This should be a unique identifier within a single lobster master to ensure we dont overwrite a cfg file to early
-        mod_tag = 'idx{0}'.format(idx)
-        tail = tail.replace("cfg.py","{tag}_cfg.py".format(tag=mod_tag)
-        mod_loc = os.path.join(MODIFIED_CFG_DIR,tail)
-        shutil.copy(template_loc,mod_loc)
-
-        wf_fragments[step] = mod_loc
-    gen = Workflow(
-        label='gen_step_{p}_{c}_{r}'.format(p=p,c=c,r=r),
-        command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
-        sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
-        merge_size=-1,  # Don't merge files we don't plan to keep
-        cleanup_input=False,
-        globaltag=False,
-        outputs=['GEN-00000.root'],
-        dataset=Dataset(
-            files=lhe_dir,
-            files_per_task=10,
-            patterns=["*.root"]
-        ),
-        category=gen_resources
-    )
-
-    wf.extend([gen])
+    for mod_tag,sed_str in gen_mods.iteritems():
+        wf_fragments = {}
+        for step in wf_steps:
+            if fragment_map.has_key(p) and fragment_map[p].has_key(step):
+                template_loc = fragment_map[p][step]
+            else:
+                template_loc = fragment_map['default'][step]
+            head,tail = os.path.split(template_loc)
+            # This should be a unique identifier within a single lobster master to ensure we dont overwrite a cfg file too early
+            cfg_tag = '{tag}-{idx}'.format(tag=mod_tag,idx=idx)
+            tail = tail.replace("cfg.py","{tag}_cfg.py".format(tag=cfg_tag))
+            mod_loc = os.path.join(MODIFIED_CFG_DIR,tail)
+            shutil.copy(template_loc,mod_loc)
+            if sed_str:
+                run_process(['sed','-i','-e',sed_str,mod_loc])
+            wf_fragments[step] = mod_loc
+        gen = Workflow(
+            label='gen_step_{p}_{c}{mod}_{r}'.format(p=p,c=c,mod=mod_tag,r=r),
+            command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
+            sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            merge_size=-1,  # Don't merge files we don't plan to keep
+            cleanup_input=False,
+            globaltag=False,
+            outputs=['GEN-00000.root'],
+            dataset=Dataset(
+                files=lhe_dir,
+                files_per_task=5,
+                patterns=["*.root"]
+            ),
+            category=gen_resources
+        )
+        wf.extend([gen])
 
 config = Config(
     label=master_label,
