@@ -3,15 +3,15 @@
 # Sets up the CMSSW releases and creates the python configs for the various processing steps. These
 #   python configs are all built using the 'HIG-RunIIFall17wmLHEGS-00040' McM request as an example.
 #   Additional python configs can then be made by copying these baseline configs and modifying them
-#   accordingly (e.g. for ttH parton showering).
+#   accordingly (e.g. for ttH parton showering or tllq-4f scheme).
 # NOTE: This should be run from the 'lobster_workflow' directory in order to ensure that the CMSSW
 #   releases are created in the correct location.
-export SCRAM_ARCH=slc6_amd64_gcc630
+export SCRAM_ARCH=slc7_amd64_gcc630
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_9_3_1/src ] ; then
- echo release CMSSW_9_3_1 already exists
+    echo release CMSSW_9_3_1 already exists
 else
-scram p CMSSW CMSSW_9_3_1
+    scram p CMSSW CMSSW_9_3_1
 fi
 cd CMSSW_9_3_1/src
 eval `scram runtime -sh`
@@ -55,9 +55,9 @@ cfgname=LHEGS-00040_1_cfg.py
 cmsDriver.py Configuration/GenProduction/python/${fragment} --fileout file:${fout} --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --nThreads 8 --geometry DB:Extended --era Run2_2017 --python_filename ${cfgname} --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n ${nevts} || exit $? ;
 
 if [ -r CMSSW_9_4_0_patch1/src ] ; then 
- echo release CMSSW_9_4_0_patch1 already exists
+    echo release CMSSW_9_4_0_patch1 already exists
 else
- scram p CMSSW CMSSW_9_4_0_patch1
+    scram p CMSSW CMSSW_9_4_0_patch1
 fi
 cd CMSSW_9_4_0_patch1/src
 eval `scram runtime -sh`

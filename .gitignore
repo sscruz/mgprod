@@ -6,9 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Specific directories
+lobster_workflow/python_cfgs/modified/*
+
 # Misc local files
-WIP_*
 *.txt
 *.log
-test.py
-trash.py
