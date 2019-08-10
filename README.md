@@ -5,7 +5,7 @@ This code is meant to generate Monte Carlo events using [MadGraph](https://cp3.i
 In order to setup your area, run the setup scripts located in the scripts directory.
 
     cd lobster_workflow
-    source scripts/setup_cmssw.sh
+    ./scripts/setup_cmssw.sh
 
 This setup script is simply to make sure that the correct CMSSW releases are present when running lobster and should only have to be run once.
 
