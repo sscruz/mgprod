@@ -13,7 +13,8 @@ MODIFIED_CFG_DIR = "python_cfgs/modified"
 
 timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
-username = "awightma"
+#username = "awightma"
+username = "kmohrman"
 
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
@@ -22,14 +23,15 @@ RUN_SETUP = 'mg_studies'
 in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
-out_tag  = "2019_04_19/ttHJet-xqcutStudies"
+#grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
+grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
+out_tag  = "2019_04_19/ttHJet-HanModel16DttllScanpoints-xqcutScan"
 #out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
 process_whitelist = []
-coeff_whitelist   = []
+coeff_whitelist   = ["HanModel16DttllScanpoints.*"]
 runs_whitelist    = []  # (i.e. MG starting points)
 
 master_label = 'EFT_ALL_genOnly_{tstamp}'.format(tstamp=timestamp_tag)
@@ -57,7 +59,9 @@ else:
     print "Unknown run setup, {setup}".format(setup=RUN_SETUP)
     raise ValueError
 
+input_path = "/store/user/"
 input_path_full = "/hadoop" + input_path
+
 
 storage = StorageConfiguration(
     input=[
@@ -77,19 +81,26 @@ storage = StorageConfiguration(
     disable_input_streaming=False,
 )
 
+dir_list = [
+    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet-xqcutStudies-xqcut10qCutTests/v1"),
+    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan/v1")
+]
+
 lhe_dirs = []
-for fd in os.listdir(input_path_full):
-    if fd.find('lhe_step_') < 0:
-        continue
-    arr = fd.split('_')
-    p,c,r = arr[2],arr[3],arr[4]
-    if len(regex_match([p],process_whitelist)) == 0:
-        continue
-    elif len(regex_match([c],coeff_whitelist)) == 0:
-        continue
-    elif len(regex_match([r],runs_whitelist)) == 0:
-        continue
-    lhe_dirs.append(fd)
+for path in dir_list:
+    for fd in os.listdir(path):
+        if fd.find('lhe_step_') < 0:
+            continue
+        arr = fd.split('_')
+        p,c,r = arr[2],arr[3],arr[4]
+        if len(regex_match([p],process_whitelist)) == 0:
+            continue
+        elif len(regex_match([c],coeff_whitelist)) == 0:
+            continue
+        elif len(regex_match([r],runs_whitelist)) == 0:
+            continue
+        relpath = os.path.relpath(path,input_path_full)
+        lhe_dirs.append(os.path.join(relpath,fd))
 
 
 #################################################################
@@ -146,18 +157,19 @@ fragment_map = {
 
 # For each input, create multiple output workflows modifying a single GEN config attribute
 gen_mods = {}
-gen_mods['base'] = ''
-gen_mods['qCut10'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 10|g'
+#gen_mods['base'] = ''
 gen_mods['qCut25'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 25|g'
-gen_mods['qCut40'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 40|g'
-gen_mods['qCut60'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 60|g'
+gen_mods['qCut19'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 19|g'
+gen_mods['qCut10'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 10|g'
 
 wf = []
 
 print "Generating workflows:"
 for idx,lhe_dir in enumerate(lhe_dirs):
     print "\t[{n}/{tot}] LHE Input: {dir}".format(n=idx+1,tot=len(lhe_dirs),dir=lhe_dir)
-    arr = lhe_dir.split('_')
+    #arr = lhe_dir.split('_')
+    head,tail = os.path.split(lhe_dir)
+    arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
     for mod_tag,sed_str in gen_mods.iteritems():
         wf_fragments = {}
