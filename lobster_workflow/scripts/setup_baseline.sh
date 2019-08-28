@@ -9,7 +9,7 @@
 export SCRAM_ARCH=slc7_amd64_gcc630
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_9_3_1/src ] ; then
-    echo release CMSSW_9_3_1 already exists
+    echo "release CMSSW_9_3_1 already exists"
 else
     scram p CMSSW CMSSW_9_3_1
 fi
