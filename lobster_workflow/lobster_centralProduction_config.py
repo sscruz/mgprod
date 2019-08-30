@@ -58,7 +58,7 @@ storage = StorageConfiguration(
     disable_input_streaming=True,
 )
 
-tzq_info = {
+tZq_info = {
     'name': 'tzq_ll_4f_ckm_NLO',
     'location': os.path.join(input_path,"awightma/gridpack_scans/central_gridpacks"),
     'tarball': 'tzq_ll_4f_ckm_NLO_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
@@ -68,8 +68,38 @@ tzq_info = {
     'gen_release': 'CMSSW_9_3_6',
 }
 
+ttH_FXFX_info = {
+    'name': 'tth01j_5f_ckm_NLO_FXFX_MH125',
+    'location': os.path.join(input_path,"awightma/gridpack_scans/central_gridpacks"),
+    'tarball': 'tth01j_5f_ckm_NLO_FXFX_MH125_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
+    'lhe_cfg': 'python_cfgs/central/tth01j_5f_ckm_NLO_FXFX_MH125/LHE-00000_1_cfg.py',
+    'gen_cfg': 'python_cfgs/central/tth01j_5f_ckm_NLO_FXFX_MH125/GEN-00000_1_cfg.py',
+    'lhe_release': 'CMSSW_9_3_1',
+    'gen_release': 'CMSSW_9_3_1',
+}
+
+ttW_MLM_info = {
+    'name': 'ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8',
+    'location': os.path.join(input_path,"awightma/gridpack_scans/central_gridpacks"),
+    'tarball': 'ttW012j_5f.tar.xz',
+    'lhe_cfg': 'python_cfgs/central/ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8/LHE-00000_1_cfg.py',
+    'gen_cfg': 'python_cfgs/central/ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8/GEN-00000_1_cfg.py',
+    'lhe_release': 'CMSSW_9_3_1',
+    'gen_release': 'CMSSW_9_3_1',
+}
+
+ttW_FxFx_info = {
+    'name': 'TTWJetsToLNu_TuneCP5_PSweights_13TeV_amcatnloFXFX_madspin_pythia8',
+    'location': os.path.join(input_path,"awightma/gridpack_scans/central_gridpacks"),
+    'tarball': 'ttW012j_5f.tar.xz',
+    'lhe_cfg': 'python_cfgs/central/TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8/LHE-00000_1_cfg.py',
+    'gen_cfg': 'python_cfgs/central/TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8/GEN-00000_1_cfg.py',
+    'lhe_release': 'CMSSW_9_3_4',
+    'gen_release': 'CMSSW_9_3_4',
+}
+
 gridpacks = [
-    tzq_info,
+    tZq_info,
 ]
 
 # Note: The tllq4fMatchedNoSchanW gridpacks seem to require ~2600 MB disk
