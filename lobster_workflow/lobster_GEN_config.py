@@ -132,6 +132,15 @@ fragment_map = {
     'ttHJet': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
     },
+    'ttHJetqq': {
+        'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
+    },
+    'ttHJetgg': {
+        'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
+    },  
+    'ttH1Jetgq': {
+        'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
+    },  
     'ttlnuJet': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
     },
@@ -147,20 +156,26 @@ fragment_map = {
     'tllq4fMatched': {
         'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
     },
+    'tllq4fMatchedNoSchanW':{
+        'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
+    },
     'tllq4fMatchedNoHiggs': {# Uses same fragment as tllq4f
         'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
     },
     'tHq4fMatched': {# Uses same fragment as tllq4f
         'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
-    }
+    },
+    'ttbarJetgg': {
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
 }
 
 # For each input, create multiple output workflows modifying a single GEN config attribute
 gen_mods = {}
 #gen_mods['base'] = ''
-gen_mods['qCut25'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 25|g'
-gen_mods['qCut19'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 19|g'
-gen_mods['qCut10'] = 's|JetMatching:qCut = 19|JetMatching:qCut = 10|g'
+gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
 
 wf = []
 
@@ -171,7 +186,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     head,tail = os.path.split(lhe_dir)
     arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
-    for mod_tag,sed_str in gen_mods.iteritems():
+    for mod_tag,sed_str_list in gen_mods.iteritems():
         wf_fragments = {}
         for step in wf_steps:
             if fragment_map.has_key(p) and fragment_map[p].has_key(step):
@@ -184,8 +199,9 @@ for idx,lhe_dir in enumerate(lhe_dirs):
             tail = tail.replace("cfg.py","{tag}_cfg.py".format(tag=cfg_tag))
             mod_loc = os.path.join(MODIFIED_CFG_DIR,tail)
             shutil.copy(template_loc,mod_loc)
-            if sed_str:
-                run_process(['sed','-i','-e',sed_str,mod_loc])
+            for sed_str in sed_str_list:
+                if sed_str:
+                    run_process(['sed','-i','-e',sed_str,mod_loc])
             wf_fragments[step] = mod_loc
         if mod_tag == 'base': mod_tag = ''
         gen = Workflow(
