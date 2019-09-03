@@ -34,8 +34,7 @@ process_whitelist = ['^ttlnu$']
 coeff_whitelist   = ['^NoDim6$']
 runs_whitelist    = ['^run0$']    # (i.e. MG starting points)
 
-master_label = 'EFT_LHE_%s' % (timestamp_tag)
-#master_label = 'EFT_T3_LHE_%s' % (timestamp_tag)
+master_label = 'EFT_T3_{tstamp}'.format(tstamp=timestamp_tag)
 
 if RUN_SETUP == 'local':
     # Overwrite the input path to point to a local AFS file directory with the desired gridpacks
@@ -73,7 +72,7 @@ elif RUN_SETUP == 'full_production':
     ]
 elif RUN_SETUP == 'lobster_test':
     # For lobster workflow tests
-    grp_tag = "lobster_{tstamp}".format(timestamp_tag)
+    grp_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
     output_path  = "/store/user/$USER/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)
     workdir_path = "/tmpscratch/users/$USER/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)
     plotdir_path = "~/www/lobster/LHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=version)

@@ -1,12 +1,13 @@
 import datetime
 import os
 import sys
+import shutil
 
 from lobster import cmssw
 from lobster.core import AdvancedOptions, Category, Config, Dataset,ParentDataset, StorageConfiguration, Workflow
 
 sys.path.append(os.getcwd())
-from helpers.utils import regex_match
+from helpers.utils import regex_match, run_process
 
 MODIFIED_CFG_DIR = "python_cfgs/modified"
 
@@ -14,8 +15,6 @@ timestamp_tag = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 
 input_path = "/store/user/"
 input_path_full = "/hadoop" + input_path
-
-# username = "awightma"
 
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
@@ -27,10 +26,8 @@ input_dirs = [
     os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan/v1")
 ]
 
-# in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-# grp_tag  = "2019_04_19/ttZRunCard"      # For 'local' and 'mg_studies' setups
 out_tag = "2019_04_19/ttZRunCard"      # For 'mg_studies' setup
 out_tag = "Round1/Batch1"              # For 'full_production' setup
 
@@ -44,19 +41,16 @@ master_label = 'EFT_ALL_postLHE_{tstamp}'.format(tstamp=timestamp_tag)
 if RUN_SETUP == 'local':
     # For quick generic lobster workflow testing
     test_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
-    # input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
     output_path  = "/store/user/$USER/tests/{tag}".format(tag=test_tag)
     workdir_path = "/tmpscratch/users/$USER/tests/{tag}".format(tag=test_tag)
     plotdir_path = "~/www/lobster/tests/{tag}".format(tag=test_tag)
 elif RUN_SETUP == 'mg_studies':
     # For MadGraph test studies
-    # input_path   = "/store/user/{user}/LHE_step/{tag}/{ver}/".format(user=username,tag=grp_tag,ver=in_ver)
     output_path  = "/store/user/$USER/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
     workdir_path = "/tmpscratch/users/$USER/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
     plotdir_path = "~/www/lobster/postLHE_step/{tag}/{ver}".format(tag=out_tag,ver=out_ver)
 elif RUN_SETUP == 'full_production':
     # For Large MC production
-    # input_path   = "/store/user/{user}/FullProduction/{tag}/LHE_step/{ver}".format(user=username,tag=prod_tag,ver=in_ver)
     output_path  = "/store/user/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
     workdir_path = "/tmpscratch/users/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
     plotdir_path = "~/www/lobster/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
@@ -95,7 +89,6 @@ for path in input_dirs:
             continue
         elif len(regex_match([r],runs_whitelist)) == 0:
             continue
-        lhe_dirs.append(fd)
         relpath = os.path.relpath(path,input_path_full)
         lhe_dirs.append(os.path.join(relpath,fd))
 
@@ -229,7 +222,6 @@ wf = []
 print "Generating workflows:"
 for idx,lhe_dir in enumerate(lhe_dirs):
     print "\t[{0}/{1}] LHE Input: {dir}".format(idx+1,len(lhe_dirs),dir=lhe_dir)
-    # arr = lhe_dir.split('_')
     head,tail = os.path.split(lhe_dir)
     arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
@@ -256,6 +248,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
             wf_fragments[step] = mod_loc
         if mod_tag == 'base': mod_tag = ''
         label_tag = "{p}_{c}{mod}_{r}".format(p=p,c=c,r=r,mod=mod_tag)
+        print "\t\tLabel: {label}".format(label=label_tag)
         gs = Workflow(
             label='gs_step_{tag}'.format(tag=label_tag),
             command='cmsRun {cfg}'.format(cfg=wf_fragments['gs']),
