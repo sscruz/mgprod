@@ -17,21 +17,33 @@ input_path = "/store/user/"
 input_path_full = "/hadoop" + input_path
 
 #RUN_SETUP = 'local'
-#RUN_SETUP = 'full_production'
-RUN_SETUP = 'mg_studies'
+RUN_SETUP = 'full_production'
+#RUN_SETUP = 'mg_studies'
 
 # Note: The workflows in each of the input directories should all be uniquely named w.r.t each other
 input_dirs = [
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet-xqcutStudies-xqcut10qCutTests/v1"),
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet-xqcutStudies-xqcut10qCutTests/v1"),
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch2/LHE_step/v2"), # 3 mil ttH, ttW, ttZ
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch4/LHE_step/v2"), # 5 mil tZq
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch3/LHE_step/v1"), # 10 mil tHq
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch5/LHE_step/v1"), # 3 mil ttX
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch6/LHE_step/v1"), # 5 mil ttX, 5 mil tZq 
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch7/LHE_step/v2"), # 10 mil ttH (good start pt)
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1"), # 5M ttH (good start pt), 5M tZq, 5M ttZ 
+    os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch9/LHE_step/v1"), # 10M tZq 
+    #os.path.join(input_path_full,"awightma/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v2") # Andrew's 250k SM signal samples
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v3") # My 250k SM signal samples
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet_HanModelOrigSMCheck/v1") # 500k ttXJet SM han orig model
 ]
 
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-out_tag = "2019_04_19/ttZRunCard"      # For 'mg_studies' setup
-out_tag = "Round1/Batch1"              # For 'full_production' setup
+#out_tag = "2019_04_19/ttXJet-HanModelOrigSMCheck"      # For 'mg_studies' setup
+out_tag = "Round6/Batch9"                               # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
+#process_whitelist = ["ttHJet","ttllNuNuJetNoHiggs","ttlnuJet"]
+#process_whitelist = ["tllq4fNoSchanWNoHiggs0p","ttllNuNuJetNoHiggs","ttlnuJet"]
 process_whitelist = []
 coeff_whitelist   = []
 runs_whitelist    = []  # (i.e. MG starting points)
@@ -206,16 +218,34 @@ fragment_map = {
     'ttllNuNuJetNoHiggs': {# Uses same fragment as ttlnuJet
         'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-ttlnuJets_1_cfg.py',
     },
+    'tllq4fNoSchanWNoHiggs0p': {# Remember to turn off matching!!!
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
     'tHq4fMatched': {# Uses same fragment as tllq4f
         'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
-    }
+    },
+    'tHq4f': {# Uses same fragment as tllq4f, remember to turn matching off!!!
+        'gs':   'python_cfgs/GS/HIG-RunIIFall17wmGS-00000-tllq4f_1_cfg.py',
+    },
 }
 
 # Note: These changes will be applied to every process in the run
 # TODO: Allow ability to specify mods on per processes basis
-gs_mods = {}
-gs_mods['base'] = []
-gs_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+#gs_mods = {}
+#gs_mods['base'] = []
+#gs_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+#gs_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gs_mods_dict = {}
+
+gs_mods_dict["base"] = {}
+gs_mods_dict["base"]["base"] = []
+
+gs_mods_dict["tllq4fNoSchanWNoHiggs0p"] = {}
+gs_mods_dict["tllq4fNoSchanWNoHiggs0p"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gs_mods_dict["tHq4f"] = {}
+gs_mods_dict["tHq4f"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
 
 wf = []
 
@@ -225,6 +255,11 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     head,tail = os.path.split(lhe_dir)
     arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
+    #for mod_tag,sed_str_list in gs_mods.iteritems():
+    if p in gs_mods_dict:
+        gs_mods = gs_mods_dict[p]
+    else:
+        gs_mods = gs_mods_dict["base"]
     for mod_tag,sed_str_list in gs_mods.iteritems():
         wf_fragments = {}
         for step in wf_steps:

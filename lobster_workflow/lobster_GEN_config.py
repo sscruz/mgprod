@@ -24,14 +24,17 @@ in_ver  = "v1"   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
 #grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
-grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
-out_tag  = "2019_04_19/ttHJet-HanModel16DttllScanpoints-xqcutScan"
+#grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
+grp_tag  = ""
+#out_tag  = "2019_04_19/ttX-ttXJet-HanV4Model-0Jetvs1JetTests"
+#out_tag  = "2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks-xqcut10qCut19"
+out_tag  = "2019_04_19/ttHJet_HanV4xqcutTests"
 #out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
 process_whitelist = []
-coeff_whitelist   = ["HanModel16DttllScanpoints.*"]
+coeff_whitelist   = []
 runs_whitelist    = []  # (i.e. MG starting points)
 
 master_label = 'EFT_ALL_genOnly_{tstamp}'.format(tstamp=timestamp_tag)
@@ -82,8 +85,7 @@ storage = StorageConfiguration(
 )
 
 dir_list = [
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet-xqcutStudies-xqcut10qCutTests/v1"),
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan/v1")
+    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4xqcutTests/v1"),
 ]
 
 lhe_dirs = []
@@ -102,6 +104,11 @@ for path in dir_list:
         relpath = os.path.relpath(path,input_path_full)
         lhe_dirs.append(os.path.join(relpath,fd))
 
+#lhe_dirs = [
+#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run2",
+#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttlnuJet_HanV4ttXJetStartPtChecks_run1",
+#    "kmohrman/LHE_step/2019_04_19/ttZJet_HanV4ttXJetStartPtChecks-run2run3/v1/lhe_step_ttllNuNuJetNoHiggs_HanV4ttXJetStartPtChecks_run2",
+#]
 
 #################################################################
 # Worker Res.:
@@ -138,7 +145,7 @@ fragment_map = {
     'ttHJetgg': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
     },  
-    'ttH1Jetgq': {
+    'ttHJetgq': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
     },  
     'ttlnuJet': {
@@ -162,7 +169,13 @@ fragment_map = {
     'tllq4fMatchedNoHiggs': {# Uses same fragment as tllq4f
         'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
     },
+    'tllq4fNoSchanWNoHiggs0p': {# Uses same fragment as tllq4f (but remember to turn off matching!!!)
+        'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
+    },
     'tHq4fMatched': {# Uses same fragment as tllq4f
+        'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
+    },
+    'tHq4f': {# Uses same fragment as tllq4f (but remember to turn off matching!!!)
         'gen': 'python_cfgs/GEN/GEN-00000-tllq4f_1_cfg.py',
     },
     'ttbarJetgg': {
@@ -173,9 +186,11 @@ fragment_map = {
 # For each input, create multiple output workflows modifying a single GEN config attribute
 gen_mods = {}
 #gen_mods['base'] = ''
-gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
-gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
 gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
+gen_mods['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+#gen_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
 
 wf = []
 
