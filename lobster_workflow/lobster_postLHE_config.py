@@ -287,7 +287,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         gs = Workflow(
             label='gs_step_{tag}'.format(tag=label_tag),
             command='cmsRun {cfg}'.format(cfg=wf_fragments['gs']),
-            sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            sandbox=cmssw.Sandbox(release='CMSSW_9_3_6'),
             merge_size=-1,  # Don't merge files we don't plan to keep
             cleanup_input=False,
             globaltag=False,
@@ -305,7 +305,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
             command='cmsRun {cfg}'.format(cfg=wf_fragments['digi']),
             sandbox=cmssw.Sandbox(release='CMSSW_9_4_0_patch1'),
             merge_size=-1,  # Don't merge files we don't plan to keep
-            cleanup_input=False,    # Save the GEN-SIM step
+            cleanup_input=True,    # Save the GEN-SIM step
             outputs=['HIG-RunIIFall17DRPremix-00823ND_step1.root'],
             dataset=ParentDataset(
                 parent=gs,
