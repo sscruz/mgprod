@@ -240,6 +240,8 @@ gs_mods_dict = {}
 
 gs_mods_dict["base"] = {}
 gs_mods_dict["base"]["base"] = []
+# gs_mods_dict["base"]["qCutUp"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+# gs_mods_dict["base"]["qCutDown"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
 
 gs_mods_dict["tllq4fNoSchanWNoHiggs0p"] = {}
 gs_mods_dict["tllq4fNoSchanWNoHiggs0p"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
