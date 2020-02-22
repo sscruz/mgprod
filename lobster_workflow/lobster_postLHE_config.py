@@ -17,8 +17,9 @@ input_path = "/store/user/"
 input_path_full = "/hadoop" + input_path
 
 #RUN_SETUP = 'local'
-RUN_SETUP = 'full_production'
+#RUN_SETUP = 'full_production'
 #RUN_SETUP = 'mg_studies'
+RUN_SETUP = 'testing'
 
 # Note: The workflows in each of the input directories should all be uniquely named w.r.t each other
 input_dirs = [
@@ -30,9 +31,9 @@ input_dirs = [
     #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch6/LHE_step/v1"), # 5 mil ttX, 5 mil tZq 
     #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch7/LHE_step/v2"), # 10 mil ttH (good start pt)
     #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1"), # 5M ttH (good start pt), 5M tZq, 5M ttZ 
-    os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch9/LHE_step/v1"), # 10M tZq 
+    #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch9/LHE_step/v1"), # 10M tZq 
     #os.path.join(input_path_full,"awightma/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v2") # Andrew's 250k SM signal samples
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v3") # My 250k SM signal samples
+    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v3") # My 250k SM signal samples
     #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet_HanModelOrigSMCheck/v1") # 500k ttXJet SM han orig model
 ]
 
@@ -66,6 +67,11 @@ elif RUN_SETUP == 'full_production':
     output_path  = "/store/user/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
     workdir_path = "/tmpscratch/users/$USER/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
     plotdir_path = "~/www/lobster/FullProduction/{tag}/postLHE_step/{ver}".format(tag=out_tag,ver=out_ver)
+elif RUN_SETUP == 'testing':
+    grp_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
+    output_path  = "/store/user/$USER/postLHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/postLHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/postLHE_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
 else:
     print "Unknown run setup, {setup}".format(setup=RUN_SETUP)
     raise ValueError
@@ -168,7 +174,7 @@ reco_resources = Category(
     name='reco',
     cores=3,
     memory=3500,
-    disk=2000,
+    disk=3000,
     #runtime=1800,
     mode='fixed'
 )
