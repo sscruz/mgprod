@@ -21,26 +21,12 @@ username = "kmohrman"
 RUN_SETUP = 'mg_studies'
 #RUN_SETUP = 'lobster_test'
 
-in_ver  = ""   # The version index for the INPUT directory
+in_ver  = ""   # The version index for the INPUT directory, think this is not actually used?
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-#grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
-#grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
-grp_tag  = ""
-#out_tag  = "2019_04_19/ttHJet-HanV4cptAxisScan-withPSweights"
-#out_tag  = "2019_04_19/ttXJet_HanV4_semftComp_QED1_QCD2_DIM62"
-#out_tag  = "2019_04_19/ttH-ttHJet_dim6Top-vMay2020-normChromoTrue"
-#out_tag  = "2019_04_19/ttW-ttWJet-ttZ-ttZJet_QED-QCD-order-tests"
-#out_tag  = "2019_04_19/tllqJet5f_SMmodel-xqcut10-nJetMax-Tests"
-#out_tag  = "2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2"
-#out_tag  = "2019_04_19/ttX-ttXJet_HanV4-QED2-startPtChecks"
-#out_tag  = "2019_04_19/ttH_HanV4ttH0pStartPtDoubleCheck"
-#out_tag  = "2019_04_19/test"
-#out_tag  = "2019_04_19/ttHJet_HanV4-5M"
-#out_tag  = "FullR2Studies/PreliminaryStudies/ttHJet_dim6TopMay20_testing-old-genprod-updated-model"
-#out_tag  = "FullR2Studies/PreliminaryStudies/ttXJet-tXq_testUpdateGenproddim6TopMay20GST-testAllProcs"
-out_tag  = "FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4"
+grp_tag  = "" # Think this is not actually used?
 #out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
+out_tag  = "FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4"
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -102,16 +88,6 @@ storage = StorageConfiguration(
 )
 
 dir_list = [
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4cptAxisScan/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-ttZ-ttZJet_QED-QCD-order-tests/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet_HanV4-QED1-noQCDconstraints/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/tllqJet5f_HanV4-xqcut10/v1"),
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/tllqJet5f_SMmodel-xqcut10/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttX-ttXJet_HanV4-QED2-startPtChecks/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttH_HanV4ttH0pStartPtDoubleCheck/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/ttHJet_testUpdateGenprod-testModels/v1")
-    #os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/ttHJet_testOldGenprod-testModels/v1")
     os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4/v1")
 ]
 
@@ -131,17 +107,9 @@ for path in dir_list:
         relpath = os.path.relpath(path,input_path_full)
         lhe_dirs.append(os.path.join(relpath,fd))
 
+## Specify LHE dirs by hand:
 #lhe_dirs = [
-    #"kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run2"
-    #"kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttlnuJet_HanV4ttXJetStartPtChecks_run1",
-    #"kmohrman/LHE_step/2019_04_19/ttZJet_HanV4ttXJetStartPtChecks-run2run3/v1/lhe_step_ttllNuNuJetNoHiggs_HanV4ttXJetStartPtChecks_run2",
-    #"kmohrman/LHE_step/2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2/v1/lhe_step_ttH_SMEFTNLO_slc7"
-    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run0",
-    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run1",
-    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run2",
-    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run3",
-    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run4",
-    #"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run0",
+#    #"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run0",
 #]
 
 #################################################################
@@ -163,6 +131,7 @@ gen_resources = Category(
 #################################################################
 
 wf_steps = ['gen']
+# Some example NLO configs we used while testing NLO samples for pheno paper. We did not get to the point of fully understanding the NLO samples, so these configs may not be fully correct or trustworthy.
 fragment_map_NLO = {
     'ttH': { # Reza's sample with this name does not have an extra jet explicitly
         'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_cfg.py',
@@ -266,17 +235,6 @@ fragment_map = {
 }
 
 # For each input, create multiple output workflows modifying a single GEN config attribute
-#gen_mods = {}
-#gen_mods['base'] = ''
-#gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
-#gen_mods['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
-#gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
-#gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
-#gen_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g' , 's|TimeShower:mMaxGamma = 4.0|TimeShower:mMaxGamma = 10|g'] # Also set mMaxGamma to default to match 2017 analysis
-#gen_mods['qCut19_nJetMax1'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 1|g']
-#gen_mods['qCut19_nJet1_nJetMax2'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 2|g']
-#gen_mods['qCut50_nJetMax1'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 50|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 1|g']
-#gen_mods['qCut50_nJetMax2'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 50|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 2|g']
 
 gen_mods_dict = {}
 
