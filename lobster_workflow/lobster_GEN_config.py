@@ -19,16 +19,27 @@ username = "kmohrman"
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
 RUN_SETUP = 'mg_studies'
+#RUN_SETUP = 'lobster_test'
 
-in_ver  = "v1"   # The version index for the INPUT directory
+in_ver  = ""   # The version index for the INPUT directory
 out_ver = "v1"   # The version index for the OUTPUT directory
 
 #grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
 #grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
 grp_tag  = ""
-#out_tag  = "2019_04_19/ttX-ttXJet-HanV4Model-0Jetvs1JetTests"
-#out_tag  = "2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks-xqcut10qCut19"
-out_tag  = "2019_04_19/ttHJet_HanV4xqcutTests"
+#out_tag  = "2019_04_19/ttHJet-HanV4cptAxisScan-withPSweights"
+#out_tag  = "2019_04_19/ttXJet_HanV4_semftComp_QED1_QCD2_DIM62"
+#out_tag  = "2019_04_19/ttH-ttHJet_dim6Top-vMay2020-normChromoTrue"
+#out_tag  = "2019_04_19/ttW-ttWJet-ttZ-ttZJet_QED-QCD-order-tests"
+#out_tag  = "2019_04_19/tllqJet5f_SMmodel-xqcut10-nJetMax-Tests"
+#out_tag  = "2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2"
+#out_tag  = "2019_04_19/ttX-ttXJet_HanV4-QED2-startPtChecks"
+#out_tag  = "2019_04_19/ttH_HanV4ttH0pStartPtDoubleCheck"
+#out_tag  = "2019_04_19/test"
+#out_tag  = "2019_04_19/ttHJet_HanV4-5M"
+#out_tag  = "FullR2Studies/PreliminaryStudies/ttHJet_dim6TopMay20_testing-old-genprod-updated-model"
+#out_tag  = "FullR2Studies/PreliminaryStudies/ttXJet-tXq_testUpdateGenproddim6TopMay20GST-testAllProcs"
+out_tag  = "FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4"
 #out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
@@ -58,6 +69,12 @@ elif RUN_SETUP == 'full_production':
     output_path  = "/store/user/$USER/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
     workdir_path = "/tmpscratch/users/$USER/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
     plotdir_path = "~/www/lobster/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
+elif RUN_SETUP == 'lobster_test':
+    # For lobster workflow tests
+    grp_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
+    output_path  = "/store/user/$USER/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
 else:
     print "Unknown run setup, {setup}".format(setup=RUN_SETUP)
     raise ValueError
@@ -85,7 +102,17 @@ storage = StorageConfiguration(
 )
 
 dir_list = [
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4xqcutTests/v1"),
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4cptAxisScan/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-ttZ-ttZJet_QED-QCD-order-tests/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet_HanV4-QED1-noQCDconstraints/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/tllqJet5f_HanV4-xqcut10/v1"),
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/tllqJet5f_SMmodel-xqcut10/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttX-ttXJet_HanV4-QED2-startPtChecks/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttH_HanV4ttH0pStartPtDoubleCheck/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/ttHJet_testUpdateGenprod-testModels/v1")
+    #os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/ttHJet_testOldGenprod-testModels/v1")
+    os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4/v1")
 ]
 
 lhe_dirs = []
@@ -105,9 +132,16 @@ for path in dir_list:
         lhe_dirs.append(os.path.join(relpath,fd))
 
 #lhe_dirs = [
-#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run2",
-#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttlnuJet_HanV4ttXJetStartPtChecks_run1",
-#    "kmohrman/LHE_step/2019_04_19/ttZJet_HanV4ttXJetStartPtChecks-run2run3/v1/lhe_step_ttllNuNuJetNoHiggs_HanV4ttXJetStartPtChecks_run2",
+    #"kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run2"
+    #"kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttlnuJet_HanV4ttXJetStartPtChecks_run1",
+    #"kmohrman/LHE_step/2019_04_19/ttZJet_HanV4ttXJetStartPtChecks-run2run3/v1/lhe_step_ttllNuNuJetNoHiggs_HanV4ttXJetStartPtChecks_run2",
+    #"kmohrman/LHE_step/2019_04_19/ttX-NLO_SMEFT_QED1_QCD2_NP2/v1/lhe_step_ttH_SMEFTNLO_slc7"
+    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run0",
+    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run1",
+    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run2",
+    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run3",
+    #"kmohrman/LHE_step/2019_04_19/ttW-ttWJet-HanV4cpQ3AxisScan/v1/lhe_step_ttWJet_cpQ3HanV4AxisScan_run4",
+    #"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run0",
 #]
 
 #################################################################
@@ -129,6 +163,30 @@ gen_resources = Category(
 #################################################################
 
 wf_steps = ['gen']
+fragment_map_NLO = {
+    'ttH': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_cfg.py',
+    },
+    'ttW': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py', # No matching
+    },
+    'ttZ': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py', # No matching
+    },
+    'ttHjet':{ # Reza ttH + j sample
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_matchON_cfg.py',
+        #'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_cfg.py',
+    },
+    'tth01j':{ # Central ttH (with extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_matchON_cfg.py',
+     },
+    'TTWJetsToLNu':{ # Central ttlnu (with extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00075_1_cfg.py',
+     },
+    'TTZJetsToLLNuNu':{ # Central ttll (WITHOUT extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py',
+     },
+}
 fragment_map = {
     'default': {
         'gen': 'python_cfgs/GEN/GEN-00000_1_cfg.py',
@@ -181,16 +239,64 @@ fragment_map = {
     'ttbarJetgg': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
     },
+    'ttHJetSMEFTcomp': { # Use same as ttHJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
+    },
+    'ttWJetSMEFTcomp': { # Use same as ttlnuJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttZJetSMEFTcomp': { # USe same as ttlnuJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttWJet': { # Use same as ttlnuJet? Should check with Andrew.
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttZJet': { # Use same as ttlnuJet? Should check with Andrew.
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'tllqJet5fNoSchanWNoHiggs': { # Use same as ttlnuJet ### Note! Hard coded nJet = 1 into cfg for this run
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttbar' :{ # Remember to turn off matching!!!
+        'gen':'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttbarJet' :{
+        'gen':'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
 }
 
 # For each input, create multiple output workflows modifying a single GEN config attribute
-gen_mods = {}
+#gen_mods = {}
 #gen_mods['base'] = ''
-gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
-gen_mods['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
-gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
-gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
-#gen_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+#gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
+#gen_mods['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+#gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+#gen_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g' , 's|TimeShower:mMaxGamma = 4.0|TimeShower:mMaxGamma = 10|g'] # Also set mMaxGamma to default to match 2017 analysis
+#gen_mods['qCut19_nJetMax1'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 1|g']
+#gen_mods['qCut19_nJet1_nJetMax2'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 2|g']
+#gen_mods['qCut50_nJetMax1'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 50|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 1|g']
+#gen_mods['qCut50_nJetMax2'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 50|g' , 's|JetMatching:nJetMax = 1|JetMatching:nJetMax = 2|g']
+
+gen_mods_dict = {}
+
+gen_mods_dict["base"] = {}
+gen_mods_dict["base"]["base"] = []
+# gen_mods_dict["base"]["qCutUp"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+# gen_mods_dict["base"]["qCutDown"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gen_mods_dict["ttHJet"] = {}
+#gen_mods_dict["ttHJet"]['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gen_mods_dict["ttHJet"]['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+#gen_mods_dict["ttHJet"]['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+
+gen_mods_dict["tllq4fNoSchanWNoHiggs0p"] = {}
+gen_mods_dict["tllq4fNoSchanWNoHiggs0p"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gen_mods_dict["tHq4f"] = {}
+gen_mods_dict["tHq4f"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gen_mods_dict["ttbar"] = {}
+gen_mods_dict["ttbar"]["MatchOff"] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
 
 wf = []
 
@@ -201,13 +307,19 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     head,tail = os.path.split(lhe_dir)
     arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
+    if p in gen_mods_dict:
+        gen_mods = gen_mods_dict[p]
+    else:
+        gen_mods = gen_mods_dict["base"]
     for mod_tag,sed_str_list in gen_mods.iteritems():
         wf_fragments = {}
         for step in wf_steps:
             if fragment_map.has_key(p) and fragment_map[p].has_key(step):
                 template_loc = fragment_map[p][step]
             else:
+                print "\nNo fragment specified! Using default for this step."
                 template_loc = fragment_map['default'][step]
+            #template_loc = fragment_map_NLO[p][step] # For NLO
             head,tail = os.path.split(template_loc)
             # This should be a unique identifier within a single lobster master to ensure we dont overwrite a cfg file too early
             cfg_tag = '{tag}-{idx}'.format(tag=mod_tag,idx=idx)
@@ -222,7 +334,8 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         gen = Workflow(
             label='gen_step_{p}_{c}{mod}_{r}'.format(p=p,c=c,mod=mod_tag,r=r),
             command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
-            sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            #sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            sandbox=cmssw.Sandbox(release='CMSSW_9_3_6'),
             merge_size=-1,  # Don't merge files we don't plan to keep
             cleanup_input=False,
             globaltag=False,
@@ -236,6 +349,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         )
         wf.extend([gen])
 
+
 config = Config(
     label=master_label,
     workdir=workdir_path,
@@ -243,6 +357,7 @@ config = Config(
     storage=storage,
     workflows=wf,
     advanced=AdvancedOptions(
+        dashboard = False,
         bad_exit_codes=[127, 160],
         log_level=1,
         payload=10,
