@@ -18,8 +18,8 @@ input_path_full = "/hadoop" + input_path
 
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
-#RUN_SETUP = 'mg_studies'
-RUN_SETUP = 'testing'
+RUN_SETUP = 'mg_studies'
+#RUN_SETUP = 'testing'
 
 # Note: The workflows in each of the input directories should all be uniquely named w.r.t each other
 input_dirs = [
@@ -33,14 +33,18 @@ input_dirs = [
     #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1"), # 5M ttH (good start pt), 5M tZq, 5M ttZ 
     #os.path.join(input_path_full,"kmohrman/FullProduction/Round6/Batch9/LHE_step/v1"), # 10M tZq 
     #os.path.join(input_path_full,"awightma/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v2") # Andrew's 250k SM signal samples
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v3") # My 250k SM signal samples
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet-tXq4f_HanV4SMCheck/v3") # My 250k SM signal samples
     #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJet_HanModelOrigSMCheck/v1") # 500k ttXJet SM han orig model
+    #os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4cptAxisScan/v1") # cpt axis scan for systematics checks
+    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttXJetTests-HanV4Model-xqcut10/v1")
 ]
 
 out_ver = "v1"   # The version index for the OUTPUT directory
 
 #out_tag = "2019_04_19/ttXJet-HanModelOrigSMCheck"      # For 'mg_studies' setup
-out_tag = "Round6/Batch9"                               # For 'full_production' setup
+#out_tag = "Round6/Batch9"                               # For 'full_production' setup
+#out_tag = "2019_04_19/ttHJet-HanV4cptAxisScan-withPSweights"
+out_tag = "2019_04_19/ttXJet_HanV4_TestWithParticleLevelProducer"
 
 # Only run over lhe steps from specific processes/coeffs/runs
 #process_whitelist = ["ttHJet","ttllNuNuJetNoHiggs","ttlnuJet"]
@@ -248,6 +252,11 @@ gs_mods_dict["base"] = {}
 gs_mods_dict["base"]["base"] = []
 # gs_mods_dict["base"]["qCutUp"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
 # gs_mods_dict["base"]["qCutDown"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gs_mods_dict["ttHJet"] = {}
+#gs_mods_dict["ttHJet"]['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gs_mods_dict["ttHJet"]['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+#gs_mods_dict["ttHJet"]['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+
 
 gs_mods_dict["tllq4fNoSchanWNoHiggs0p"] = {}
 gs_mods_dict["tllq4fNoSchanWNoHiggs0p"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
@@ -359,6 +368,7 @@ config = Config(
     storage=storage,
     workflows=wf,
     advanced=AdvancedOptions(
+        dashboard = False,
         bad_exit_codes=[127, 160],
         log_level=1,
         payload=10,
