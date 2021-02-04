@@ -4,7 +4,7 @@ export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 MAKE_UL16_CFGS=false
-MAKE_UL16APV_CFGS=false
+MAKE_UL16APV_CFGS=true
 MAKE_UL17_CFGS=false
 MAKE_UL18_CFGS=false
 
@@ -135,12 +135,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_SIM_cfg.py
         FIN=GEN-00000.root
         FOUT=SIM-00000.root
-        REL=
+        REL=CMSSW_10_6_17_patch1
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16SIMAPV
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent RAWSIM --runUnscheduled --datatier GEN-SIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --beamspot Realistic25ns13TeV2016Collision --step SIM --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:step-1.root --fileout file:step0.root
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent RAWSIM --runUnscheduled --datatier GEN-SIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --beamspot Realistic25ns13TeV2016Collision --step SIM --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:$FIN --fileout file:$FOUT --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 
@@ -149,12 +151,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_DIGI_cfg.py
         FIN=SIM-00000.root
         FOUT=DIGI-00000.root
-        REL=
+        REL=CMSSW_10_6_17_patch1
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16DIGIPremixAPV
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent PREMIXRAW --runUnscheduled --datatier GEN-SIM-DIGI --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --nThreads 8 --geometry DB:Extended --datamix PreMix --era Run2_2016_HIPM  --filein file:step-1.root --fileout file:step0.root --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL16_106X_mcRun2_asymptotic_v13-v1/PREMIX"
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent PREMIXRAW --runUnscheduled --datatier GEN-SIM-DIGI --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --nThreads 8 --geometry DB:Extended --datamix PreMix --era Run2_2016_HIPM  --filein file:$FIN --fileout file:$FOUT --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL16_106X_mcRun2_asymptotic_v13-v1/PREMIX" --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 
@@ -163,12 +167,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_HLT_cfg.py
         FIN=DIGI-00000.root
         FOUT=HLT-00000.root
-        REL=
+        REL=CMSSW_8_0_33_UL
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16HLTAPV
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent RAWSIM --outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" --datatier GEN-SIM-RAW --inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:25ns15e33_v4 --nThreads 8 --geometry DB:Extended --era Run2_2016  --filein file:step-1.root --fileout file:step0.root
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent RAWSIM --outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" --datatier GEN-SIM-RAW --inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' --step HLT:25ns15e33_v4 --nThreads 8 --geometry DB:Extended --era Run2_2016  --filein file:$FIN --fileout file:$FOUT --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 
@@ -177,12 +183,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_RECO_cfg.py
         FIN=HLT-00000.root
         FOUT=RECO-00000.root
-        REL=
+        REL=CMSSW_10_6_17_patch1
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16RECOAPV
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step RAW2DIGI,L1Reco,RECO,RECOSIM --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:step-1.root --fileout file:step0.root
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step RAW2DIGI,L1Reco,RECO,RECOSIM --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:$FIN --fileout file:$FOUT --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 
@@ -191,12 +199,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_MAOD_cfg.py
         FIN=RECO-00000.root
         FOUT=MAOD-00000.root
-        REL=
+        REL=CMSSW_10_6_20
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16MiniAODAPVv2
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step PAT --procModifiers run2_miniAOD_UL --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:step-1.root --fileout file:step0.root
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v8 --step PAT --procModifiers run2_miniAOD_UL --nThreads 8 --geometry DB:Extended --era Run2_2016_HIPM  --filein file:$FIN --fileout file:$FOUT --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 
@@ -205,12 +215,14 @@ if $MAKE_UL16APV_CFGS ; then
         CFG_NAME=UL16APV_NAOD_cfg.py
         FIN=MAOD-00000.root
         FOUT=NAOD-00000.root
-        REL=
+        REL=CMSSW_10_6_19_patch2
 
-        # cfg url:
-        # cmsDriver from url:
+        # cfg url: https://twiki.cern.ch/twiki/bin/view/CMS/RunIISummer20UL16NanoAODAPVv2
+        # cmsDriver from url: cmsDriver.py step1 --mc --eventcontent NANOEDMAODSIM --datatier NANOAODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v9 --step NANO --nThreads 8 --era Run2_2016,run2_nanoAOD_106Xv1  --filein file:step-1.root --fileout file:step0.root
+
         printf "\n --- START cfg $CFG_NAME ---\n"
         setup_rel $REL
+        cmsDriver.py step1 --mc --eventcontent NANOEDMAODSIM --datatier NANOAODSIM --conditions 106X_mcRun2_asymptotic_preVFP_v9 --step NANO --nThreads 8 --era Run2_2016,run2_nanoAOD_106Xv1  --filein file:$FIN --fileout file:$FOUT --python_filename $CFG_NAME --no_exec
         printf "\n --- END cfg $CFG_NAME ---\n"
     )
 fi
