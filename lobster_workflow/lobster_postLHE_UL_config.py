@@ -168,48 +168,43 @@ maod_resources = Category(
 
 wf_steps = ['gen','sim','digi','hlt','reco','maod']
 
-base = '/afs/crc.nd.edu/user/k/kmohrman/test/test_das_query/test_cmds/ttbar'
-ul_16_base = 'UL16'
-ul_16APV_base = 'UL16APV'
-ul_17_base = 'UL17'
-ul_18_base = 'UL18'
+ul_base = 'ul_cfgs'
 
 ul_cfg_map = {
     'UL16' : {
         'all_procs' : {
-            #'sim'  : base+"/"+ul_16_base+"/"+'SIM' +"/"+'TRK-RunIISummer19UL16SIM-00003_1_cfg.py',
-            'sim'  : 'TRK-RunIISummer19UL16SIM-00003_1_cfg.py',
-            'digi' : base+"/"+ul_16_base+"/"+'DIGI'+"/"+'TRK-RunIISummer19UL16DIGI-00003_1_cfg.py',
-            'hlt'  : base+"/"+ul_16_base+"/"+'HLT' +"/"+'TRK-RunIISummer19UL16HLT-00003_1_cfg.py',
-            'reco' : base+"/"+ul_16_base+"/"+'RECO'+"/"+'TRK-RunIISummer19UL16RECO-00003_1_cfg.py',
-            'maod' : base+"/"+ul_16_base+"/"+'MAOD'+"/"+'TRK-RunIISummer19UL16MiniAOD-00003_1_cfg.py',
+            'sim'  : os.path.join(ul_base,'UL16_SIM_cfg.py'),
+            'digi' : os.path.join(ul_base,'UL16_DIGI_cfg.py'),
+            'hlt'  : os.path.join(ul_base,'UL16_HLT_cfg.py'),
+            'reco' : os.path.join(ul_base,'UL16_RECO_cfg.py'),
+            'maod' : os.path.join(ul_base,'UL16_MAOD_cfg.py'),
         }
     },
     'UL16APV' : {
         'all_procs' : {
-            'sim'  : base+"/"+ul_16APV_base+"/"+'SIM' +"/"+'TRK-RunIISummer19UL16SIMAPV-00003_1_cfg.py',
-            'digi' : base+"/"+ul_16APV_base+"/"+'DIGI'+"/"+'TRK-RunIISummer19UL16DIGIAPV-00001_1_cfg.py',
-            'hlt'  : base+"/"+ul_16APV_base+"/"+'HLT' +"/"+'TRK-RunIISummer19UL16HLTAPV-00003_1_cfg.py',
-            'reco' : base+"/"+ul_16APV_base+"/"+'RECO'+"/"+'TRK-RunIISummer19UL16RECOAPV-00003_1_cfg.py',
-            'maod' : base+"/"+ul_16APV_base+"/"+'MAOD'+"/"+'TRK-RunIISummer19UL16MiniAODAPV-00003_1_cfg.py',
+            'sim'  : os.path.join(ul_base,'UL16APV_SIM_cfg.py'),
+            'digi' : os.path.join(ul_base,'UL16APV_DIGI_cfg.py'),
+            'hlt'  : os.path.join(ul_base,'UL16APV_HLT_cfg.py'),
+            'reco' : os.path.join(ul_base,'UL16APV_RECO_cfg.py'),
+            'maod' : os.path.join(ul_base,'UL16APV_MAOD_cfg.py'),
         }
     },
     'UL17' : {
         'all_procs' : {
-            'sim'  : base+"/"+ul_17_base+"/"+'SIM' +"/"+'TRK-RunIISummer19UL17SIM-00003_1_cfg.py',
-            'digi' : base+"/"+ul_17_base+"/"+'DIGI'+"/"+'TRK-RunIISummer19UL17DIGI-00003_1_cfg.py',
-            'hlt'  : base+"/"+ul_17_base+"/"+'HLT' +"/"+'TRK-RunIISummer19UL17HLT-00003_1_cfg.py',
-            'reco' : base+"/"+ul_17_base+"/"+'RECO'+"/"+'TRK-RunIISummer19UL17RECO-00003_1_cfg.py',
-            'maod' : base+"/"+ul_17_base+"/"+'MAOD'+"/"+'TRK-RunIISummer19UL17MiniAOD-00003_1_cfg.py',
+            'sim'  : os.path.join(ul_base,'UL17_SIM_cfg.py'),
+            'digi' : os.path.join(ul_base,'UL17_DIGI_cfg.py'),
+            'hlt'  : os.path.join(ul_base,'UL17_HLT_cfg.py'),
+            'reco' : os.path.join(ul_base,'UL17_RECO_cfg.py'),
+            'maod' : os.path.join(ul_base,'UL17_MAOD_cfg.py'),
         }
     },
     'UL18' : {
         'all_procs' : {
-            'sim'  : base+"/"+ul_18_base+"/"+'SIM' +"/"+'TRK-RunIISummer19UL18SIM-00003_1_cfg.py',
-            'digi' : base+"/"+ul_18_base+"/"+'DIGI'+"/"+'TRK-RunIISummer19UL18DIGI-00003_1_cfg.py',
-            'hlt'  : base+"/"+ul_18_base+"/"+'HLT' +"/"+'TRK-RunIISummer19UL18HLT-00003_1_cfg.py',
-            'reco' : base+"/"+ul_18_base+"/"+'RECO'+"/"+'TRK-RunIISummer19UL18RECO-00003_1_cfg.py',
-            'maod' : base+"/"+ul_18_base+"/"+'MAOD'+"/"+'TRK-RunIISummer19UL18MiniAOD-00003_1_cfg.py',
+            'sim'  : os.path.join(ul_base,'UL18_SIM_cfg.py'),
+            'digi' : os.path.join(ul_base,'UL18_DIGI_cfg.py'),
+            'hlt'  : os.path.join(ul_base,'UL18_HLT_cfg.py'),
+            'reco' : os.path.join(ul_base,'UL18_RECO_cfg.py'),
+            'maod' : os.path.join(ul_base,'UL18_MAOD_cfg.py'),
         }
     }
 
@@ -239,36 +234,35 @@ gen_cfg_map = {
 
 rel_map = {
     'UL16' : {
-        #'gen' : 'CMSSW_10_6_12',
-        'sim' : 'CMSSW_10_6_12',
-        'digi': 'CMSSW_10_6_12',
+        'sim' : 'CMSSW_10_6_17_patch1',
+        'digi': 'CMSSW_10_6_17_patch1',
         'hlt' : 'CMSSW_8_0_33_UL',
-        'reco': 'CMSSW_10_6_12',
-        'maod': 'CMSSW_10_6_12',
+        'reco': 'CMSSW_10_6_17_patch1',
+        'maod': 'CMSSW_10_6_20',
     },
     'UL16APV' : {
         #'gen' : 'CMSSW_10_6_12',
-        'sim' : 'CMSSW_10_6_12',
-        'digi': 'CMSSW_10_6_12',
-        'hlt' : 'CMSSW_8_0_33_UL',
-        'reco': 'CMSSW_10_6_12',
-        'maod': 'CMSSW_10_6_12',
+        #'sim' : 'CMSSW_10_6_12',
+        #'digi': 'CMSSW_10_6_12',
+        #'hlt' : 'CMSSW_8_0_33_UL',
+        #'reco': 'CMSSW_10_6_12',
+        #'maod': 'CMSSW_10_6_12',
     },
     'UL17' : {
         #'gen' : 'CMSSW_10_6_12',
-        'sim' : 'CMSSW_10_6_2',
-        'digi': 'CMSSW_10_6_2',
-        'hlt' : 'CMSSW_9_4_14_UL_patch1',
-        'reco': 'CMSSW_10_6_2',
-        'maod': 'CMSSW_10_6_2',
+        #'sim' : 'CMSSW_10_6_2',
+        #'digi': 'CMSSW_10_6_2',
+        #'hlt' : 'CMSSW_9_4_14_UL_patch1',
+        #'reco': 'CMSSW_10_6_2',
+        #'maod': 'CMSSW_10_6_2',
     },
     'UL18' : {
         #'gen' : 'CMSSW_10_6_12',
-        'sim' : 'CMSSW_10_6_4_patch1',
-        'digi': 'CMSSW_10_6_4_patch1',
-        'hlt' : 'CMSSW_10_2_16_UL',
-        'reco': 'CMSSW_10_6_4_patch1',
-        'maod': 'CMSSW_10_6_4_patch1',
+        #'sim' : 'CMSSW_10_6_4_patch1',
+        #'digi': 'CMSSW_10_6_4_patch1',
+        #'hlt' : 'CMSSW_10_2_16_UL',
+        #'reco': 'CMSSW_10_6_4_patch1',
+        #'maod': 'CMSSW_10_6_4_patch1',
     },
 
 }
