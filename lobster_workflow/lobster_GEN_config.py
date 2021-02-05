@@ -19,17 +19,14 @@ username = "kmohrman"
 #RUN_SETUP = 'local'
 #RUN_SETUP = 'full_production'
 RUN_SETUP = 'mg_studies'
+#RUN_SETUP = 'lobster_test'
 
-in_ver  = "v1"   # The version index for the INPUT directory
+in_ver  = ""   # The version index for the INPUT directory, think this is not actually used?
 out_ver = "v1"   # The version index for the OUTPUT directory
 
-#grp_tag  = "2019_04_19/ttHJet-xqcutStudies"   # For 'local' and 'mg_studies' setups
-#grp_tag  = "2019_04_19/HanModelNoctG16DttllScanpointsxqcutscan"
-grp_tag  = ""
-#out_tag  = "2019_04_19/ttX-ttXJet-HanV4Model-0Jetvs1JetTests"
-#out_tag  = "2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks-xqcut10qCut19"
-out_tag  = "2019_04_19/ttHJet_HanV4xqcutTests"
+grp_tag  = "" # Think this is not actually used?
 #out_tag = "test/lobster_test_{tstamp}".format(tstamp=timestamp_tag)
+out_tag  = "FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4"
 prod_tag = "Round1/Batch1"            # For 'full_production' setup
 
 # Only run over lhe steps from specific processes/coeffs/runs
@@ -58,6 +55,12 @@ elif RUN_SETUP == 'full_production':
     output_path  = "/store/user/$USER/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
     workdir_path = "/tmpscratch/users/$USER/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
     plotdir_path = "~/www/lobster/genOnly_step/FP/{tag}/{ver}".format(tag=prod_tag,ver=out_ver)
+elif RUN_SETUP == 'lobster_test':
+    # For lobster workflow tests
+    grp_tag = "lobster_{tstamp}".format(tstamp=timestamp_tag)
+    output_path  = "/store/user/$USER/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    workdir_path = "/tmpscratch/users/$USER/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
+    plotdir_path = "~/www/lobster/genOnly_step/tests/{tag}/{ver}".format(tag=grp_tag,ver=out_ver)
 else:
     print "Unknown run setup, {setup}".format(setup=RUN_SETUP)
     raise ValueError
@@ -85,7 +88,7 @@ storage = StorageConfiguration(
 )
 
 dir_list = [
-    os.path.join(input_path_full,"kmohrman/LHE_step/2019_04_19/ttHJet_HanV4xqcutTests/v1"),
+    os.path.join(input_path_full,"kmohrman/LHE_step/FullR2Studies/PreliminaryStudies/tHq4f_testOldGenprod-HanV4/v1")
 ]
 
 lhe_dirs = []
@@ -104,10 +107,9 @@ for path in dir_list:
         relpath = os.path.relpath(path,input_path_full)
         lhe_dirs.append(os.path.join(relpath,fd))
 
+## Specify LHE dirs by hand:
 #lhe_dirs = [
-#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run2",
-#    "kmohrman/LHE_step/2019_04_19/ttHJet-ttWJet_HanV4ttXJetStartPtChecks/v1/lhe_step_ttlnuJet_HanV4ttXJetStartPtChecks_run1",
-#    "kmohrman/LHE_step/2019_04_19/ttZJet_HanV4ttXJetStartPtChecks-run2run3/v1/lhe_step_ttllNuNuJetNoHiggs_HanV4ttXJetStartPtChecks_run2",
+#    #"kmohrman/FullProduction/Round6/Batch8/LHE_step/v1/lhe_step_ttHJet_HanV4ttXJetStartPtChecks_run0",
 #]
 
 #################################################################
@@ -129,6 +131,31 @@ gen_resources = Category(
 #################################################################
 
 wf_steps = ['gen']
+# Some example NLO configs we used while testing NLO samples for pheno paper. We did not get to the point of fully understanding the NLO samples, so these configs may not be fully correct or trustworthy.
+fragment_map_NLO = {
+    'ttH': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_cfg.py',
+    },
+    'ttW': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py', # No matching
+    },
+    'ttZ': { # Reza's sample with this name does not have an extra jet explicitly
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py', # No matching
+    },
+    'ttHjet':{ # Reza ttH + j sample
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_matchON_cfg.py',
+        #'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_cfg.py',
+    },
+    'tth01j':{ # Central ttH (with extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/HIG-RunIIFall17wmLHEGS-00054_1_matchON_cfg.py',
+     },
+    'TTWJetsToLNu':{ # Central ttlnu (with extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00075_1_cfg.py',
+     },
+    'TTZJetsToLLNuNu':{ # Central ttll (WITHOUT extra jet explicitly)
+        'gen': 'python_cfgs/GEN/NLO/TOP-RunIIFall17wmLHEGS-00076_1_cfg.py',
+     },
+}
 fragment_map = {
     'default': {
         'gen': 'python_cfgs/GEN/GEN-00000_1_cfg.py',
@@ -181,16 +208,53 @@ fragment_map = {
     'ttbarJetgg': {
         'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
     },
+    'ttHJetSMEFTcomp': { # Use same as ttHJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttHJets_1_cfg.py',
+    },
+    'ttWJetSMEFTcomp': { # Use same as ttlnuJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttZJetSMEFTcomp': { # USe same as ttlnuJet
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttWJet': { # Use same as ttlnuJet? Should check with Andrew.
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttZJet': { # Use same as ttlnuJet? Should check with Andrew.
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'tllqJet5fNoSchanWNoHiggs': { # Use same as ttlnuJet ### Note! Hard coded nJet = 1 into cfg for this run
+        'gen': 'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttbar' :{ # Remember to turn off matching!!!
+        'gen':'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
+    'ttbarJet' :{
+        'gen':'python_cfgs/GEN/GEN-00000-ttlnuJets_1_cfg.py',
+    },
 }
 
 # For each input, create multiple output workflows modifying a single GEN config attribute
-gen_mods = {}
-#gen_mods['base'] = ''
-gen_mods['qCut10'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 10|g']
-gen_mods['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
-gen_mods['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
-gen_mods['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
-#gen_mods['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gen_mods_dict = {}
+
+gen_mods_dict["base"] = {}
+gen_mods_dict["base"]["base"] = []
+# gen_mods_dict["base"]["qCutUp"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+# gen_mods_dict["base"]["qCutDown"] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gen_mods_dict["ttHJet"] = {}
+#gen_mods_dict["ttHJet"]['qCut15'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 15|g']
+#gen_mods_dict["ttHJet"]['qCut19'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 19|g']
+#gen_mods_dict["ttHJet"]['qCut25'] = ['s|JetMatching:qCut = 19|JetMatching:qCut = 25|g']
+
+gen_mods_dict["tllq4fNoSchanWNoHiggs0p"] = {}
+gen_mods_dict["tllq4fNoSchanWNoHiggs0p"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gen_mods_dict["tHq4f"] = {}
+gen_mods_dict["tHq4f"]['MatchOff'] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
+
+gen_mods_dict["ttbar"] = {}
+gen_mods_dict["ttbar"]["MatchOff"] = ['s|JetMatching:merge = on|JetMatching:merge = off|g']
 
 wf = []
 
@@ -201,13 +265,19 @@ for idx,lhe_dir in enumerate(lhe_dirs):
     head,tail = os.path.split(lhe_dir)
     arr = tail.split('_')
     p,c,r = arr[2],arr[3],arr[4]
+    if p in gen_mods_dict:
+        gen_mods = gen_mods_dict[p]
+    else:
+        gen_mods = gen_mods_dict["base"]
     for mod_tag,sed_str_list in gen_mods.iteritems():
         wf_fragments = {}
         for step in wf_steps:
             if fragment_map.has_key(p) and fragment_map[p].has_key(step):
                 template_loc = fragment_map[p][step]
             else:
+                print "\nNo fragment specified! Using default for this step."
                 template_loc = fragment_map['default'][step]
+            #template_loc = fragment_map_NLO[p][step] # For NLO
             head,tail = os.path.split(template_loc)
             # This should be a unique identifier within a single lobster master to ensure we dont overwrite a cfg file too early
             cfg_tag = '{tag}-{idx}'.format(tag=mod_tag,idx=idx)
@@ -222,7 +292,8 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         gen = Workflow(
             label='gen_step_{p}_{c}{mod}_{r}'.format(p=p,c=c,mod=mod_tag,r=r),
             command='cmsRun {cfg}'.format(cfg=wf_fragments['gen']),
-            sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            #sandbox=cmssw.Sandbox(release='CMSSW_9_3_1'),
+            sandbox=cmssw.Sandbox(release='CMSSW_9_3_6'),
             merge_size=-1,  # Don't merge files we don't plan to keep
             cleanup_input=False,
             globaltag=False,
@@ -236,6 +307,7 @@ for idx,lhe_dir in enumerate(lhe_dirs):
         )
         wf.extend([gen])
 
+
 config = Config(
     label=master_label,
     workdir=workdir_path,
@@ -243,6 +315,7 @@ config = Config(
     storage=storage,
     workflows=wf,
     advanced=AdvancedOptions(
+        dashboard = False,
         bad_exit_codes=[127, 160],
         log_level=1,
         payload=10,
